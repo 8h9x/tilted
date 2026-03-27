@@ -1,6 +1,10 @@
-import HomebaseRatingMapping from "./HomebaseRatingMapping.json" with { type: "json" };
+import HomebaseRatingMapping from "./HomebaseRatingMapping.json" with {
+  type: "json",
+};
 import BaseItemRating from "./BaseItemRating.json" with { type: "json" };
-import SurvivorItemRating from "./SurvivorItemRating.json" with { type: "json" };
+import SurvivorItemRating from "./SurvivorItemRating.json" with {
+  type: "json",
+};
 import CurveTable from "../util/CurveTable.ts";
 import type { CurveKey } from "../util/CurveTable.ts";
 

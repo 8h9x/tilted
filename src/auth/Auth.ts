@@ -109,7 +109,8 @@ class Auth extends Base {
       await this.client.http.epicgamesRequest(
         {
           method: "DELETE",
-          url: `${Endpoints.OAUTH_TOKEN_KILL_MULTIPLE}?killType=OTHERS_ACCOUNT_CLIENT_SERVICE`,
+          url:
+            `${Endpoints.OAUTH_TOKEN_KILL_MULTIPLE}?killType=OTHERS_ACCOUNT_CLIENT_SERVICE`,
         },
         AuthSessionStoreKey.Fortnite,
       );
@@ -161,10 +162,12 @@ class Auth extends Base {
     }
 
     this.client.debug(
-      `[AUTH] Authentification successful (${(
-        (Date.now() - authStartTime) /
-        1000
-      ).toFixed(2)}s)`,
+      `[AUTH] Authentification successful (${
+        (
+          (Date.now() - authStartTime) /
+          1000
+        ).toFixed(2)
+      }s)`,
     );
   }
 
@@ -199,8 +202,7 @@ class Auth extends Base {
     await this.client.http.epicgamesRequest(
       {
         method: "POST",
-        url:
-          `${Endpoints.INIT_EULA}/version/${EULAdata.version}/account/` +
+        url: `${Endpoints.INIT_EULA}/version/${EULAdata.version}/account/` +
           `${
             this.sessions.get(AuthSessionStoreKey.Fortnite)!.accountId
           }/accept?locale=${EULAdata.locale}`,
@@ -254,8 +256,9 @@ class Auth extends Base {
     deviceAuthResolvable: DeviceAuthResolveable,
     authClient: AuthClient,
   ) {
-    const deviceAuth: DeviceAuthWithSnakeCaseSupport =
-      await resolveAuthObject(deviceAuthResolvable);
+    const deviceAuth: DeviceAuthWithSnakeCaseSupport = await resolveAuthObject(
+      deviceAuthResolvable,
+    );
 
     const fortniteSession = await FortniteAuthSession.create(
       this.client,

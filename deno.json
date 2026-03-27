@@ -1,31 +1,31 @@
 {
-    "name": "@8h9x/tilted",
-    "version": "0.1.0-alpha.1",
-    "license": "MIT",
-    "tasks": {
-        "test": "deno test --allow-env --allow-net ./tests/",
-        "lint": "deno lint",
-        "fmt": "deno fmt",
-        "check": "deno check src/mod.ts"
-    },
-    "exports": { ".": "./src/mod.ts" },
-    "imports": {
-        "@discordjs/collection": "npm:@discordjs/collection@^2.1.1",
-        "@sapphire/async-queue": "npm:@sapphire/async-queue@^1.5.5",
-        "@std/expect": "jsr:@std/expect@^1.0.18",
-        "@std/testing": "jsr:@std/testing@^1.0.17",
-        "stanza": "npm:stanza@^12.22.0",
-        "ws": "npm:ws@^8.20.0"
-    },
-    "nodeModulesDir": "auto",
-    "compilerOptions": {
-        "strict": true,
-        "lib": ["ESNext", "Deno.ns", "deno.window", "dom"]
-    },
-    "lint": {
-        "exclude": ["website/"]
-    },
-    "publish": {
-        "exclude": ["website/", "tests/"]
-    }
+  "name": "@8h9x/tilted",
+  "version": "0.1.0-alpha.1",
+  "license": "MIT",
+  "tasks": {
+    "test": "deno test --allow-env --allow-net ./tests/",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "check": "deno check src/mod.ts"
+  },
+  "exports": { ".": "./src/mod.ts" },
+  "imports": {
+    "@discordjs/collection": "npm:@discordjs/collection@^2.1.1",
+    "@sapphire/async-queue": "npm:@sapphire/async-queue@^1.5.5",
+    "@std/expect": "jsr:@std/expect@^1.0.18",
+    "@std/testing": "jsr:@std/testing@^1.0.17",
+    "stanza": "npm:stanza@^12.22.0",
+    "ws": "npm:ws@^8.20.0"
+  },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["ESNext", "Deno.ns", "deno.window", "dom"]
+  },
+  "lint": {
+    "exclude": ["website/"]
+  },
+  "publish": {
+    "exclude": ["website/", "tests/"]
+  }
 }

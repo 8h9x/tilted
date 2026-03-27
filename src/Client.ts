@@ -776,14 +776,12 @@ class Client extends EventTarget {
     if (onlineType && !toJID) this.config.defaultOnlineType = onlineType;
 
     const rawStatus = {
-      Status:
-        status ||
+      Status: status ||
         this.config.defaultStatus ||
         (this.party && `Lobby - ${this.party.size} / ${this.party.maxSize}`) ||
         "Playing Battle Royale",
       bIsPlaying: false,
-      bIsJoinable:
-        this.party &&
+      bIsJoinable: this.party &&
         !this.party.isPrivate &&
         this.party.size !== this.party.maxSize,
       bHasVoiceSupport: false,
@@ -940,8 +938,8 @@ class Client extends EventTarget {
           .filter((k: string) => !k.startsWith("urn:"))
           .reduce((obj, key) => {
             // eslint-disable-next-line no-param-reassign
-            (obj as any)[key] =
-              this.party?.meta.schema[key as keyof PartySchema];
+            (obj as any)[key] = this.party?.meta
+              .schema[key as keyof PartySchema];
             return obj;
           }, {}),
       },
@@ -1173,7 +1171,7 @@ class Client extends EventTarget {
           .find((p) => p.type === "variant" && p.rel_url === ss.url)
           ?.data.split(/\n/)
           .map((l) =>
-            !l.startsWith("#") && l.length > 0 ? `${baseURL || ""}${l}` : l,
+            !l.startsWith("#") && l.length > 0 ? `${baseURL || ""}${l}` : l
           )
           .join("\n")
           .replace(/init_/g, `${baseURL || ""}init_`),
@@ -1188,13 +1186,11 @@ class Client extends EventTarget {
           variants = variants.map((v: any) => ({
             ...v,
             stream: Buffer.from(
-              v.type !== "video"
-                ? v.stream
-                : v.stream.replace(
-                    "#EXTINF:",
-                    '#EXT-X-STREAM-INF:AUDIO="group_audio"\n' +
-                      `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_audio",NAME="audio",DEFAULT=YES,URI="${audioStreamUrl}"\n#EXTINF:`,
-                  ),
+              v.type !== "video" ? v.stream : v.stream.replace(
+                "#EXTINF:",
+                '#EXT-X-STREAM-INF:AUDIO="group_audio"\n' +
+                  `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="group_audio",NAME="audio",DEFAULT=YES,URI="${audioStreamUrl}"\n#EXTINF:`,
+              ),
               "utf8",
             ),
           }));
@@ -1312,7 +1308,7 @@ class Client extends EventTarget {
             }),
           },
           AuthSessionStoreKey.Fortnite,
-        ),
+        )
       ),
     );
 
@@ -1514,7 +1510,8 @@ class Client extends EventTarget {
         }?appId=Fortnite`,
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": `Fortnite/++Fortnite+Release-${gameVersion}-CL-00000000 Windows/10.0.19044.1.768.64bit`,
+          "User-Agent":
+            `Fortnite/++Fortnite+Release-${gameVersion}-CL-00000000 Windows/10.0.19044.1.768.64bit`,
         },
         body: JSON.stringify({
           surfaceName: "CreativeDiscoverySurface_Frontend",

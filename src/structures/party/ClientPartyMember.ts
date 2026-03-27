@@ -62,7 +62,8 @@ class ClientPartyMember extends PartyMember {
       await this.client.http.epicgamesRequest(
         {
           method: "PATCH",
-          url: `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.id}/meta`,
+          url:
+            `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.id}/meta`,
           headers: {
             "Content-Type": "application/json",
           },
@@ -178,20 +179,18 @@ class ClientPartyMember extends PartyMember {
       ...data,
       BattlePassInfo: {
         ...data.BattlePassInfo,
-        bHasPurchasedPass:
-          typeof isPurchased === "boolean"
-            ? isPurchased
-            : data.BattlePassInfo.bHasPurchasedPass,
-        passLevel:
-          typeof level === "number" ? level : data.BattlePassInfo.passLevel,
-        selfBoostXp:
-          typeof selfBoost === "number"
-            ? selfBoost
-            : data.BattlePassInfo.selfBoostXp,
-        friendBoostXp:
-          typeof friendBoost === "number"
-            ? friendBoost
-            : data.BattlePassInfo.friendBoostXp,
+        bHasPurchasedPass: typeof isPurchased === "boolean"
+          ? isPurchased
+          : data.BattlePassInfo.bHasPurchasedPass,
+        passLevel: typeof level === "number"
+          ? level
+          : data.BattlePassInfo.passLevel,
+        selfBoostXp: typeof selfBoost === "number"
+          ? selfBoost
+          : data.BattlePassInfo.selfBoostXp,
+        friendBoostXp: typeof friendBoost === "number"
+          ? friendBoost
+          : data.BattlePassInfo.friendBoostXp,
       },
     });
 
@@ -239,10 +238,9 @@ class ClientPartyMember extends PartyMember {
     ) as any;
     let mpData = this.meta.get("Default:MpLoadout_j") as any;
 
-    const currentS =
-      typeof mpData.MpLoadout.s === "string"
-        ? JSON.parse(mpData.MpLoadout.s)
-        : mpData.MpLoadout.s;
+    const currentS = typeof mpData.MpLoadout.s === "string"
+      ? JSON.parse(mpData.MpLoadout.s)
+      : mpData.MpLoadout.s;
 
     if (outfit) {
       mpData = this.meta.set("Default:MpLoadout_j", {
@@ -264,10 +262,9 @@ class ClientPartyMember extends PartyMember {
 
       const parsedVariants: CosmeticsVariantMeta = {
         athenaCharacter: {
-          i:
-            outfit.variants?.map(
-              (v) => `${v.channelIndex}|${v.variantIndex}`,
-            ) ?? [],
+          i: outfit.variants?.map(
+            (v) => `${v.channelIndex}|${v.variantIndex}`,
+          ) ?? [],
         },
       };
 
@@ -314,9 +311,9 @@ class ClientPartyMember extends PartyMember {
             ...currentS,
             ab: backpack
               ? {
-                  i: backpack.id,
-                  v: backpack.variants?.map(() => 0) ?? [],
-                }
+                i: backpack.id,
+                v: backpack.variants?.map(() => 0) ?? [],
+              }
               : undefined,
           }),
         },
@@ -337,10 +334,9 @@ class ClientPartyMember extends PartyMember {
       } else {
         const parsedVariants: CosmeticsVariantMeta = {
           athenaBackpack: {
-            i:
-              backpack.variants?.map(
-                (v) => `${v.channelIndex}|${v.variantIndex}`,
-              ) ?? [],
+            i: backpack.variants?.map(
+              (v) => `${v.channelIndex}|${v.variantIndex}`,
+            ) ?? [],
           },
         };
 
@@ -350,7 +346,7 @@ class ClientPartyMember extends PartyMember {
             ...data.AthenaCosmeticLoadout,
             backpackDef: `${
               backpack.path?.replace(/\/$/, "") ??
-              "/BRCosmetics/Athena/Items/Cosmetics/Backpacks"
+                "/BRCosmetics/Athena/Items/Cosmetics/Backpacks"
             }/${backpack.id}.${backpack.id}`,
           },
         });
@@ -379,10 +375,9 @@ class ClientPartyMember extends PartyMember {
     if (pickaxe) {
       const parsedVariants: CosmeticsVariantMeta = {
         athenaPickaxe: {
-          i:
-            pickaxe.variants?.map(
-              (v) => `${v.channelIndex}|${v.variantIndex}`,
-            ) ?? [],
+          i: pickaxe.variants?.map(
+            (v) => `${v.channelIndex}|${v.variantIndex}`,
+          ) ?? [],
         },
       };
 
@@ -392,7 +387,7 @@ class ClientPartyMember extends PartyMember {
           ...data.AthenaCosmeticLoadout,
           pickaxeDef: `${
             pickaxe.path?.replace(/\/$/, "") ??
-            "/BRCosmetics/Athena/Items/Cosmetics/Pickaxes"
+              "/BRCosmetics/Athena/Items/Cosmetics/Pickaxes"
           }/${pickaxe.id}.${pickaxe.id}`,
         },
       });
@@ -432,7 +427,7 @@ class ClientPartyMember extends PartyMember {
             ...data.AthenaCosmeticLoadout,
             shoesDef: `${
               shoes.path?.replace(/\/$/, "") ??
-              "/CosmeticShoes/Assets/Items/Cosmetics"
+                "/CosmeticShoes/Assets/Items/Cosmetics"
             }/${shoes.id}.${shoes.id}`,
           },
         });
@@ -540,7 +535,7 @@ class ClientPartyMember extends PartyMember {
         ...data.FrontendEmote,
         pickable: `${
           path?.replace(/\/$/, "") ??
-          "/BRCosmetics/Athena/Items/Cosmetics/Dances"
+            "/BRCosmetics/Athena/Items/Cosmetics/Dances"
         }/${id}.${id}`,
         emoteSection: -2,
       },

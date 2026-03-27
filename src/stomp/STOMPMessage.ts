@@ -19,9 +19,11 @@ class STOMPMessage {
   }
 
   public toString(): string {
-    return `${this.command}\n${Object.entries(this.headers)
-      .map(([k, v]) => `${k}:${v}`)
-      .join("\n")}\n\n${this.body || ""}\x00`;
+    return `${this.command}\n${
+      Object.entries(this.headers)
+        .map(([k, v]) => `${k}:${v}`)
+        .join("\n")
+    }\n\n${this.body || ""}\x00`;
   }
 
   public static fromString(message: string): STOMPMessage {

@@ -92,7 +92,8 @@ class ClientParty extends Party {
       await this.client.http.epicgamesRequest(
         {
           method: "DELETE",
-          url: `${Endpoints.BR_PARTY}/parties/${this.id}/members/${this.me?.id}`,
+          url:
+            `${Endpoints.BR_PARTY}/parties/${this.id}/members/${this.me?.id}`,
         },
         AuthSessionStoreKey.Fortnite,
       );
@@ -198,7 +199,8 @@ class ClientParty extends Party {
       await this.client.http.epicgamesRequest(
         {
           method: "DELETE",
-          url: `${Endpoints.BR_PARTY}/parties/${this.id}/members/${partyMember.id}`,
+          url:
+            `${Endpoints.BR_PARTY}/parties/${this.id}/members/${partyMember.id}`,
         },
         AuthSessionStoreKey.Fortnite,
       );
@@ -238,7 +240,8 @@ class ClientParty extends Party {
       invite = await this.client.http.epicgamesRequest(
         {
           method: "POST",
-          url: `${Endpoints.BR_PARTY}/parties/${this.id}/invites/${resolvedFriend.id}?sendPing=true`,
+          url:
+            `${Endpoints.BR_PARTY}/parties/${this.id}/invites/${resolvedFriend.id}?sendPing=true`,
           headers: {
             "Content-Type": "application/json",
           },
@@ -408,7 +411,8 @@ class ClientParty extends Party {
       await this.client.http.epicgamesRequest(
         {
           method: "POST",
-          url: `${Endpoints.BR_PARTY}/parties/${this.id}/members/${partyMember.id}/promote`,
+          url:
+            `${Endpoints.BR_PARTY}/parties/${this.id}/members/${partyMember.id}/promote`,
         },
         AuthSessionStoreKey.Fortnite,
       );

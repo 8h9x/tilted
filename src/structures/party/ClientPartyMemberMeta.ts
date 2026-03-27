@@ -1,4 +1,6 @@
-import defaultPartyMemberMeta from "../../resources/defaultPartyMemberMeta.json" with { type: "json" };
+import defaultPartyMemberMeta from "../../resources/defaultPartyMemberMeta.json" with {
+  type: "json",
+};
 import { getRandomDefaultCharacter } from "../../util/Util.ts";
 import PartyMemberMeta from "./PartyMemberMeta.ts";
 import type { PartyMemberSchema } from "../../resources/structs.ts";
@@ -37,10 +39,12 @@ class ClientPartyMemberMeta extends PartyMemberMeta {
         "Default:CampaignHero_j": JSON.stringify({
           CampaignHero: {
             heroItemInstanceId: "",
-            heroType: `/Game/Athena/Heroes/${defaultCharacter.replace(
-              "CID",
-              "HID",
-            )}.${defaultCharacter.replace("CID", "HID")}`,
+            heroType: `/Game/Athena/Heroes/${
+              defaultCharacter.replace(
+                "CID",
+                "HID",
+              )
+            }.${defaultCharacter.replace("CID", "HID")}`,
           },
         }),
         "Default:PlatformData_j": JSON.stringify({

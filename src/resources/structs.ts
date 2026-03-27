@@ -5,7 +5,9 @@ import type { PathLike } from "node:fs";
 // deno-lint-ignore verbatim-module-syntax
 import defaultPartyMeta from "./defaultPartyMeta.json" with { type: "json" };
 // deno-lint-ignore verbatim-module-syntax
-import defaultPartyMemberMeta from "./defaultPartyMemberMeta.json" with { type: "json" };
+import defaultPartyMemberMeta from "./defaultPartyMemberMeta.json" with {
+  type: "json",
+};
 import type EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
 import type BlockedUser from "../structures/user/BlockedUser.ts";
 import type ClientParty from "../structures/party/ClientParty.ts";
@@ -1782,7 +1784,8 @@ export interface EOSConnectChatNewMsgMessage extends BaseEOSConnectMessage {
   type: "social.chat.v1.NEW_MESSAGE";
 }
 
-export interface EOSConnectChatConversionCreatedMessage extends BaseEOSConnectMessage {
+export interface EOSConnectChatConversionCreatedMessage
+  extends BaseEOSConnectMessage {
   payload: {
     // deployment id
     namespace: string;

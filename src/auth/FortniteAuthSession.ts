@@ -134,22 +134,25 @@ class FortniteAuthSession extends AuthSession<AuthSessionType.Fortnite> {
       clearTimeout(this.refreshTimeout);
       this.refreshTimeout = undefined;
 
-      const response =
-        await this.client.http.epicgamesRequest<FortniteAuthData>({
-          method: "POST",
-          url: Endpoints.OAUTH_TOKEN_CREATE,
-          headers: {
-            Authorization: `Basic ${btoa(
+      const response = await this.client.http.epicgamesRequest<
+        FortniteAuthData
+      >({
+        method: "POST",
+        url: Endpoints.OAUTH_TOKEN_CREATE,
+        headers: {
+          Authorization: `Basic ${
+            btoa(
               `${this.clientId}:${this.clientSecret}`,
-            )}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            grant_type: "refresh_token",
-            refresh_token: this.refreshToken,
-            token_type: "eg1",
-          }).toString(),
-        });
+            )
+          }`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: this.refreshToken,
+          token_type: "eg1",
+        }).toString(),
+      });
 
       this.accessToken = response.access_token;
       this.expiresAt = new Date(response.expires_at);

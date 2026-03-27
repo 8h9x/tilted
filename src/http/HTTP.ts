@@ -48,7 +48,7 @@ class HTTP extends Base {
     this.defaultHeaders.forEach((v, k) => headers.set(k, v));
     if (init.headers) {
       new Headers(init.headers as HeadersInit).forEach((v, k) =>
-        headers.set(k, v),
+        headers.set(k, v)
       );
     }
 
@@ -58,9 +58,11 @@ class HTTP extends Base {
     } catch (err: any) {
       const reqDuration = (Date.now() - reqStartTime) / 1000;
       this.client.debug(
-        `${method} ${url} (${reqDuration.toFixed(
-          2,
-        )}s): ${err.name} - ${err.message}`,
+        `${method} ${url} (${
+          reqDuration.toFixed(
+            2,
+          )
+        }s): ${err.name} - ${err.message}`,
         "http",
       );
       throw err;
@@ -68,9 +70,11 @@ class HTTP extends Base {
 
     const reqDuration = (Date.now() - reqStartTime) / 1000;
     this.client.debug(
-      `${method} ${url} (${reqDuration.toFixed(
-        2,
-      )}s): ${response.status} ${response.statusText}`,
+      `${method} ${url} (${
+        reqDuration.toFixed(
+          2,
+        )
+      }s): ${response.status} ${response.statusText}`,
       "http",
     );
 
@@ -93,8 +97,7 @@ class HTTP extends Base {
         response.status === 429 ||
         (data as any)?.errorCode === "errors.com.epicgames.common.throttled"
       ) {
-        const retryString =
-          response.headers.get("retry-after") ||
+        const retryString = response.headers.get("retry-after") ||
           (data as any)?.messageVars?.[0] ||
           (data as any)?.errorMessage?.match(/(?<=in )\d+(?= second)/)?.[0];
         const retryAfter = parseInt(retryString, 10);

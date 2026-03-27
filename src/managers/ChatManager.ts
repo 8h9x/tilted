@@ -154,7 +154,8 @@ class ChatManager extends Base {
     }>(
       {
         method: "POST",
-        url: `${Endpoints.EOS_CHAT}/v1/public/_/conversations?createIfExists=${createIfExists}`,
+        url:
+          `${Endpoints.EOS_CHAT}/v1/public/_/conversations?createIfExists=${createIfExists}`,
         headers: {
           "Content-Type": "application/json",
         },
@@ -269,21 +270,22 @@ class ChatManager extends Base {
    * Registers the public key on epic's servers
    */
   private async registerKeypair() {
-    const publicKeyData =
-      await this.client.http.epicgamesRequest<PublicKeyData>(
-        {
-          method: "POST",
-          url: `${Endpoints.PUBLICKEY}/v2/publickey`,
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            key: this.publicKey,
-            algorithm: "ed25519",
-          }),
+    const publicKeyData = await this.client.http.epicgamesRequest<
+      PublicKeyData
+    >(
+      {
+        method: "POST",
+        url: `${Endpoints.PUBLICKEY}/v2/publickey`,
+        headers: {
+          "Content-Type": "application/json",
         },
-        AuthSessionStoreKey.Fortnite,
-      );
+        body: JSON.stringify({
+          key: this.publicKey,
+          algorithm: "ed25519",
+        }),
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
 
     this.publicKeyData = publicKeyData;
   }

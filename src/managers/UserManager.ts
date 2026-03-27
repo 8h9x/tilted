@@ -104,12 +104,14 @@ class UserManager extends Base {
         this.client.http.epicgamesRequest(
           {
             method: "GET",
-            url: `${Endpoints.ACCOUNT_MULTIPLE}?accountId=${c.join(
-              "&accountId=",
-            )}`,
+            url: `${Endpoints.ACCOUNT_MULTIPLE}?accountId=${
+              c.join(
+                "&accountId=",
+              )
+            }`,
           },
           AuthSessionStoreKey.Fortnite,
-        ),
+        )
       ),
       ...displayNames.map((d) =>
         this.client.http
@@ -129,7 +131,7 @@ class UserManager extends Base {
             }
 
             return Promise.reject(e);
-          }),
+          })
       ),
     ]);
 
@@ -177,9 +179,11 @@ class UserManager extends Base {
     const results = await this.client.http.epicgamesRequest(
       {
         method: "GET",
-        url: `${Endpoints.ACCOUNT_SEARCH}/${this.self!.id}?prefix=${encodeURIComponent(
-          prefix,
-        )}&platform=${platform}`,
+        url: `${Endpoints.ACCOUNT_SEARCH}/${this.self!.id}?prefix=${
+          encodeURIComponent(
+            prefix,
+          )
+        }&platform=${platform}`,
       },
       AuthSessionStoreKey.Fortnite,
     );
@@ -233,12 +237,14 @@ class UserManager extends Base {
         this.client.http.epicgamesRequest(
           {
             method: "GET",
-            url: `${Endpoints.ACCOUNT_AVATAR}/fortnite/ids?accountIds=${uc
-              .map((u) => u.id)
-              .join(",")}`,
+            url: `${Endpoints.ACCOUNT_AVATAR}/fortnite/ids?accountIds=${
+              uc
+                .map((u) => u.id)
+                .join(",")
+            }`,
           },
           AuthSessionStoreKey.Fortnite,
-        ),
+        )
       ),
     );
 
@@ -251,7 +257,7 @@ class UserManager extends Base {
               ar,
               users.find((u) => u.id === ar.accountId)!,
             ),
-        ),
+        )
       )
       .flat(1);
   }
@@ -301,7 +307,7 @@ class UserManager extends Base {
             }),
           },
           AuthSessionStoreKey.Fortnite,
-        ),
+        )
       ),
     );
 
@@ -314,7 +320,7 @@ class UserManager extends Base {
               ar,
               users.find((u) => u.id === ar.accountId)!,
             ),
-        ),
+        )
       )
       .flat(1);
   }

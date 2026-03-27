@@ -1,4 +1,6 @@
-import defaultPartyMeta from "../../resources/defaultPartyMeta.json" with { type: "json" };
+import defaultPartyMeta from "../../resources/defaultPartyMeta.json" with {
+  type: "json",
+};
 import PartyMeta from "./PartyMeta.ts";
 import type { PartySchema } from "../../resources/structs.ts";
 import type ClientParty from "./ClientParty.ts";

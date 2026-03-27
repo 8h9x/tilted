@@ -1,8 +1,8 @@
-import AuthSession from './AuthSession';
-import { AuthSessionType } from '../../resources/enums';
-import Endpoints from '../../resources/Endpoints';
-import type Client from '../Client';
-import type { LauncherAuthData } from '../../resources/structs';
+import AuthSession from "./AuthSession.ts";
+import { AuthSessionType } from "../resources/enums.ts";
+import Endpoints from "../resources/Endpoints.ts";
+import type Client from "../Client.ts";
+import type { LauncherAuthData } from "../resources/structs.ts";
 
 class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
   public app: string;
@@ -13,7 +13,7 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
   public scope: string[];
   public refreshToken: string;
   public refreshTokenExpiresAt: Date;
-  public refreshTimeout?: NodeJS.Timeout;
+  public refreshTimeout?: ReturnType<typeof setTimeout>;
   constructor(client: Client, data: LauncherAuthData, clientSecret: string) {
     super(client, data, clientSecret, AuthSessionType.Launcher);
 
@@ -27,7 +27,7 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
     this.refreshTokenExpiresAt = new Date(data.refresh_expires_at);
   }
 
-  public async verify(forceVerify = false) {
+  public async verify(forceVerify = false): Promise<boolean> {
     if (!forceVerify && this.isExpired) {
       return false;
     }
@@ -41,7 +41,7 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
       });
 
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -62,7 +62,7 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
     this.refreshTimeout = undefined;
 
     await this.client.http.epicgamesRequest({
-      method: 'DELETE',
+      method: "DELETE",
       url: `${Endpoints.OAUTH_TOKEN_KILL}/${this.accessToken}`,
       headers: {
         Authorization: `bearer ${this.accessToken}`,
@@ -71,39 +71,51 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
   }
 
   public async refresh() {
+    if (this.refreshLock.isLocked) {
+      await this.refreshLock.wait();
+      return;
+    }
+
     this.refreshLock.lock();
 
     try {
       clearTimeout(this.refreshTimeout);
       this.refreshTimeout = undefined;
 
-      const response = await this.client.http.epicgamesRequest<LauncherAuthData>({
-        method: 'POST',
-        url: Endpoints.OAUTH_TOKEN_CREATE,
-        headers: {
-          Authorization: `basic ${Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64')}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        data: new URLSearchParams({
-          grant_type: 'refresh_token',
-          refresh_token: this.refreshToken,
-          token_type: 'eg1',
-        }).toString(),
-      });
+      const response =
+        await this.client.http.epicgamesRequest<LauncherAuthData>({
+          method: "POST",
+          url: Endpoints.OAUTH_TOKEN_CREATE,
+          headers: {
+            Authorization: `Basic ${btoa(
+              `${this.clientId}:${this.clientSecret}`,
+            )}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: this.refreshToken,
+            token_type: "eg1",
+          }).toString(),
+        });
 
       this.accessToken = response.access_token;
       this.expiresAt = new Date(response.expires_at);
       this.refreshToken = response.refresh_token;
       this.refreshTokenExpiresAt = new Date(response.refresh_expires_at);
 
-      this.client.emit('refreshtoken:created', {
-        accountId: this.accountId,
-        clientId: this.clientId,
-        displayName: this.displayName,
-        expiresAt: this.refreshTokenExpiresAt.toISOString(),
-        expiresIn: this.refreshTokenExpiresAt.getTime() - Date.now(),
-        token: this.refreshToken,
-      });
+      this.client.dispatchEvent(
+        this.client.createEvent("refreshtoken:created", {
+          refreshTokenData: {
+            accountId: this.accountId,
+            clientId: this.clientId,
+            displayName: this.displayName,
+            expiresAt: this.refreshTokenExpiresAt.toISOString(),
+            expiresIn: this.refreshTokenExpiresAt.getTime() - Date.now(),
+            token: this.refreshToken,
+          },
+        }),
+      );
 
       this.initRefreshTimeout();
     } finally {
@@ -113,31 +125,45 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
 
   public initRefreshTimeout() {
     clearTimeout(this.refreshTimeout);
-    this.refreshTimeout = setTimeout(() => this.refresh(), this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000);
+    this.refreshTimeout = setTimeout(
+      () => this.refresh(),
+      this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000,
+    );
   }
 
-  public static async create(client: Client, clientId: string, clientSecret: string, data: any) {
+  public static async create(
+    client: Client,
+    clientId: string,
+    clientSecret: string,
+    data: any,
+  ): Promise<LauncherAuthSession> {
     const response = await client.http.epicgamesRequest<LauncherAuthData>({
-      method: 'POST',
+      method: "POST",
       url: Endpoints.OAUTH_TOKEN_CREATE,
       headers: {
-        Authorization: `basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      data: new URLSearchParams(data).toString(),
+      body: new URLSearchParams(data).toString(),
     });
 
     const session = new LauncherAuthSession(client, response, clientSecret);
     session.initRefreshTimeout();
 
-    client.emit('refreshtoken:created', {
-      accountId: session.accountId,
-      clientId: session.clientId,
-      displayName: session.displayName,
-      expiresAt: session.refreshTokenExpiresAt.toISOString(),
-      expiresIn: Math.round((session.refreshTokenExpiresAt.getTime() - Date.now()) / 1000),
-      token: session.refreshToken,
-    });
+    client.dispatchEvent(
+      client.createEvent("refreshtoken:created", {
+        refreshTokenData: {
+          accountId: session.accountId,
+          clientId: session.clientId,
+          displayName: session.displayName,
+          expiresAt: session.refreshTokenExpiresAt.toISOString(),
+          expiresIn: Math.round(
+            (session.refreshTokenExpiresAt.getTime() - Date.now()) / 1000,
+          ),
+          token: session.refreshToken,
+        },
+      }),
+    );
 
     return session;
   }

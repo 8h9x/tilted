@@ -1,9 +1,9 @@
-import STWWeaponSchematic from './STWWeaponSchematic';
-import type { STWSchematicRangedSubType } from '../../../resources/structs';
+import STWWeaponSchematic from "./STWWeaponSchematic.ts";
+import type { STWSchematicRangedSubType } from "../../resources/structs.ts";
 
 class STWRangedWeaponSchematic extends STWWeaponSchematic {
-  public type!: 'ranged';
-  public subType!: STWSchematicRangedSubType;
+  declare public type: "ranged";
+  declare public subType: STWSchematicRangedSubType;
 }
 
 export default STWRangedWeaponSchematic;

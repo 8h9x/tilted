@@ -12,7 +12,7 @@ class FriendNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'FriendNotFoundError';
+    this.name = "FriendNotFoundError";
     this.message = `The friend "${query}" does not exist`;
 
     this.query = query;

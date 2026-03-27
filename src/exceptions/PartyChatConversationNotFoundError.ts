@@ -4,8 +4,9 @@
 class PartyChatConversationNotFoundError extends Error {
   constructor() {
     super();
-    this.name = 'PartyChatConversationNotFoundError';
-    this.message = 'There is no party chat conversation yet. You cannot send party chat messages when you are the only party member.';
+    this.name = "PartyChatConversationNotFoundError";
+    this.message =
+      "There is no party chat conversation yet. You cannot send party chat messages when you are the only party member.";
   }
 }
 

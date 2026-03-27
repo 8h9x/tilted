@@ -1,6 +1,6 @@
-import STWItem from './STWItem';
-import type { STWProfileItemData } from '../../../resources/httpResponses';
-import type Client from '../../Client';
+import STWItem from "./STWItem.ts";
+import type { STWProfileItemData } from "../../resources/httpResponses.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a Save The World profile's team perk
@@ -19,7 +19,7 @@ class STWTeamPerk extends STWItem {
   constructor(client: Client, id: string, data: STWProfileItemData) {
     super(client, id, data);
 
-    [, this.teamPerkId] = data.templateId.split(':');
+    [, this.teamPerkId] = data.templateId.split(":");
   }
 }
 

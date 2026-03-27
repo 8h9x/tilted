@@ -1,8 +1,8 @@
-import Base from '../Base';
-import EpicgamesServerStatusComponent from './EpicgamesServerStatusComponent';
-import EpicgamesServerStatusIncident from './EpicgamesServerStatusIncident';
-import type { EpicgamesServerStatusData } from '../../resources/structs';
-import type Client from '../Client';
+import Base from "../Base.ts";
+import EpicgamesServerStatusComponent from "./EpicgamesServerStatusComponent.ts";
+import EpicgamesServerStatusIncident from "./EpicgamesServerStatusIncident.ts";
+import type { EpicgamesServerStatusData } from "../resources/structs.ts";
+import type Client from "../Client.ts";
 
 /**
  * Represents an Epicgames server status
@@ -70,11 +70,17 @@ class EpicgamesServerStatus extends Base {
 
     this.components = data.components
       .filter((c) => !c.group_id)
-      .map((c) => new EpicgamesServerStatusComponent(client, c, data.components));
+      .map(
+        (c) => new EpicgamesServerStatusComponent(client, c, data.components),
+      );
 
-    this.incidents = data.incidents.map((i) => new EpicgamesServerStatusIncident(client, i));
+    this.incidents = data.incidents.map(
+      (i) => new EpicgamesServerStatusIncident(client, i),
+    );
 
-    this.scheduledMainteances = data.scheduled_maintenances.map((m) => new EpicgamesServerStatusIncident(client, m));
+    this.scheduledMainteances = data.scheduled_maintenances.map(
+      (m) => new EpicgamesServerStatusIncident(client, m),
+    );
   }
 }
 

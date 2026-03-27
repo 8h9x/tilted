@@ -12,7 +12,7 @@ class InviteeFriendshipSettingsError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'InviteeFriendshipSettingsError';
+    this.name = "InviteeFriendshipSettingsError";
     this.message = `The user ${query} disabled friendship requests`;
 
     this.query = query;

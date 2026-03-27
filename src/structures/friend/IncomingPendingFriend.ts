@@ -1,6 +1,6 @@
-import BasePendingFriend from './BasePendingFriend';
-import type { PendingFriendData } from '../../../resources/structs';
-import type Client from '../../Client';
+import BasePendingFriend from "./BasePendingFriend.ts";
+import type { PendingFriendData } from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents an incoming friendship request
@@ -9,7 +9,7 @@ class IncomingPendingFriend extends BasePendingFriend {
   constructor(client: Client, data: PendingFriendData) {
     super(client, data);
 
-    this.direction = 'INCOMING';
+    this.direction = "INCOMING";
   }
 
   /**
@@ -21,7 +21,7 @@ class IncomingPendingFriend extends BasePendingFriend {
    * @throws {InviteeFriendshipSettingsError} The user disabled friend requests
    * @throws {EpicgamesAPIError}
    */
-  public async accept() {
+  public accept(): Promise<void> {
     return this.client.friend.add(this.id);
   }
 
@@ -31,7 +31,7 @@ class IncomingPendingFriend extends BasePendingFriend {
    * @throws {FriendNotFoundError} The user is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async decline() {
+  public decline(): Promise<void> {
     return this.client.friend.remove(this.id);
   }
 }

@@ -1,6 +1,6 @@
-import STWItem from './STWItem';
-import type { STWProfileHeroLoadoutData } from '../../../resources/httpResponses';
-import type Client from '../../Client';
+import STWItem from "./STWItem.ts";
+import type { STWProfileHeroLoadoutData } from "../../resources/httpResponses.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a Save The World profile's hero loadout
@@ -35,10 +35,7 @@ class STWHeroLoadout extends STWItem {
   /**
    * The loadout's gadget IDs
    */
-  public gadgets: [
-    string | undefined,
-    string | undefined,
-  ];
+  public gadgets: [string | undefined, string | undefined];
 
   /**
    * @param client The main client
@@ -50,7 +47,9 @@ class STWHeroLoadout extends STWItem {
 
     this.loadoutIndex = data.attributes.loadout_index;
 
-    this.teamPerk = data.attributes.team_perk !== '' ? data.attributes.team_perk : undefined;
+    this.teamPerk = data.attributes.team_perk !== ""
+      ? data.attributes.team_perk
+      : undefined;
 
     this.commanderSlot = data.attributes.crew_members.commanderslot;
 

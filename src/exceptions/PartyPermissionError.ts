@@ -4,8 +4,9 @@
 class PartyPermissionError extends Error {
   constructor() {
     super();
-    this.name = 'PartyPermissionError';
-    this.message = 'The client does not have permission to perform this party action';
+    this.name = "PartyPermissionError";
+    this.message =
+      "The client does not have permission to perform this party action";
   }
 }
 

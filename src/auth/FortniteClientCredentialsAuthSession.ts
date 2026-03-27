@@ -1,17 +1,27 @@
-import AuthSession from './AuthSession';
-import { AuthSessionType } from '../../resources/enums';
-import Endpoints from '../../resources/Endpoints';
-import type Client from '../Client';
-import type { FortniteClientCredentialsAuthData } from '../../resources/structs';
+import AuthSession from "./AuthSession.ts";
+import { AuthSessionType } from "../resources/enums.ts";
+import Endpoints from "../resources/Endpoints.ts";
+import type Client from "../Client.ts";
+import type { FortniteClientCredentialsAuthData } from "../resources/structs.ts";
 
-class FortniteClientCredentialsAuthSession extends AuthSession<AuthSessionType.FortniteClientCredentials> {
+class FortniteClientCredentialsAuthSession
+  extends AuthSession<AuthSessionType.FortniteClientCredentials> {
   public clientsService: string;
   public isInternalClient: boolean;
   public productId: string;
   public applicationId: string;
-  public refreshTimeout?: NodeJS.Timeout;
-  constructor(client: Client, data: FortniteClientCredentialsAuthData, clientSecret: string) {
-    super(client, data, clientSecret, AuthSessionType.FortniteClientCredentials);
+  public refreshTimeout?: ReturnType<typeof setTimeout>;
+  constructor(
+    client: Client,
+    data: FortniteClientCredentialsAuthData,
+    clientSecret: string,
+  ) {
+    super(
+      client,
+      data,
+      clientSecret,
+      AuthSessionType.FortniteClientCredentials,
+    );
 
     this.clientsService = data.client_service;
     this.isInternalClient = data.internal_client;
@@ -19,7 +29,7 @@ class FortniteClientCredentialsAuthSession extends AuthSession<AuthSessionType.F
     this.applicationId = data.application_id;
   }
 
-  public async verify(forceVerify = false) {
+  public async verify(forceVerify = false): Promise<boolean> {
     if (!forceVerify && this.isExpired) {
       return false;
     }
@@ -43,7 +53,7 @@ class FortniteClientCredentialsAuthSession extends AuthSession<AuthSessionType.F
     this.refreshTimeout = undefined;
 
     await this.client.http.epicgamesRequest({
-      method: 'DELETE',
+      method: "DELETE",
       url: `${Endpoints.OAUTH_TOKEN_KILL}/${this.accessToken}`,
       headers: {
         Authorization: `bearer ${this.accessToken}`,
@@ -58,18 +68,26 @@ class FortniteClientCredentialsAuthSession extends AuthSession<AuthSessionType.F
       clearTimeout(this.refreshTimeout);
       this.refreshTimeout = undefined;
 
-      const response = await this.client.http.epicgamesRequest<FortniteClientCredentialsAuthData>({
-        method: 'POST',
-        url: Endpoints.OAUTH_TOKEN_CREATE,
-        headers: {
-          Authorization: `basic ${Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64')}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await this.client.http.epicgamesRequest<
+        FortniteClientCredentialsAuthData
+      >(
+        {
+          method: "POST",
+          url: Endpoints.OAUTH_TOKEN_CREATE,
+          headers: {
+            Authorization: `Basic ${
+              btoa(
+                `${this.clientId}:${this.clientSecret}`,
+              )
+            }`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            grant_type: "client_credentials",
+            token_type: "eg1",
+          }).toString(),
         },
-        data: new URLSearchParams({
-          grant_type: 'client_credentials',
-          token_type: 'eg1',
-        }).toString(),
-      });
+      );
 
       this.accessToken = response.access_token;
       this.expiresAt = new Date(response.expires_at);
@@ -82,21 +100,35 @@ class FortniteClientCredentialsAuthSession extends AuthSession<AuthSessionType.F
 
   public initRefreshTimeout() {
     clearTimeout(this.refreshTimeout);
-    this.refreshTimeout = setTimeout(() => this.refresh(), this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000);
+    this.refreshTimeout = setTimeout(
+      () => this.refresh(),
+      this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000,
+    );
   }
 
-  public static async create(client: Client, clientId: string, clientSecret: string, data: any) {
-    const response = await client.http.epicgamesRequest<FortniteClientCredentialsAuthData>({
-      method: 'POST',
+  public static async create(
+    client: Client,
+    clientId: string,
+    clientSecret: string,
+    data: any,
+  ): Promise<FortniteClientCredentialsAuthSession> {
+    const response = await client.http.epicgamesRequest<
+      FortniteClientCredentialsAuthData
+    >({
+      method: "POST",
       url: Endpoints.OAUTH_TOKEN_CREATE,
       headers: {
-        Authorization: `basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      data: new URLSearchParams(data).toString(),
+      body: new URLSearchParams(data).toString(),
     });
 
-    const session = new FortniteClientCredentialsAuthSession(client, response, clientSecret);
+    const session = new FortniteClientCredentialsAuthSession(
+      client,
+      response,
+      clientSecret,
+    );
     session.initRefreshTimeout();
 
     return session;

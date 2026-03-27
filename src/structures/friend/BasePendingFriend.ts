@@ -1,6 +1,9 @@
-import User from '../user/User';
-import type { PendingFriendData, PendingFriendDirection } from '../../../resources/structs';
-import type Client from '../../Client';
+import User from "../user/User.ts";
+import type {
+  PendingFriendData,
+  PendingFriendDirection,
+} from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a pending friend request (Either incoming or outgoing)

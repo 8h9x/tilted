@@ -1,8 +1,8 @@
-import Base from '../../Base';
-import PartyPermissionError from '../../exceptions/PartyPermissionError';
-import type { PresencePartyData } from '../../../resources/structs';
-import type Client from '../../Client';
-import type Party from './Party';
+import Base from "../../Base.ts";
+import PartyPermissionError from "../../exceptions/PartyPermissionError.ts";
+import type { PresencePartyData } from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
+import type Party from "./Party.ts";
 
 /**
  * Represents a party received by a friend's presence
@@ -62,7 +62,7 @@ class PresenceParty extends Base {
   constructor(client: Client, data: PresencePartyData) {
     super(client);
 
-    this.isPrivate = typeof data.bIsPrivate === 'boolean' || false;
+    this.isPrivate = typeof data.bIsPrivate === "boolean" || false;
     this.id = data.partyId;
     this.size = data.pc;
     this.typeId = data.partyTypeId;
@@ -90,7 +90,7 @@ class PresenceParty extends Base {
    * @throws {PartyNotFoundError} The party wasn't found
    * @throws {PartyPermissionError} The party cannot be fetched (the party is private)
    */
-  public async fetch() {
+  public async fetch(): Promise<Party> {
     if (this.isPrivate || !this.id) throw new PartyPermissionError();
 
     return this.client.getParty(this.id) as Promise<Party>;

@@ -4,8 +4,8 @@
 class PartyMaxSizeReachedError extends Error {
   constructor() {
     super();
-    this.name = 'PartyMaxSizeReachedError';
-    this.message = 'The party reached its max member count';
+    this.name = "PartyMaxSizeReachedError";
+    this.message = "The party reached its max member count";
   }
 }
 

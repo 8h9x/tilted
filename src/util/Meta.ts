@@ -1,4 +1,4 @@
-import type { Schema } from '../../resources/structs';
+import type { Schema } from "../resources/structs.ts";
 
 /**
  * Represents a key-value-based meta structure used for parties and party members
@@ -13,8 +13,8 @@ class Meta<T extends Schema> {
   /**
    * @param schema The key-value schema
    */
-  constructor(schema: T) {
-    this.schema = schema || {};
+  constructor(schema: T = {} as T) {
+    this.schema = schema;
   }
 
   /**
@@ -24,16 +24,20 @@ class Meta<T extends Schema> {
    * @param isRaw Whether the value should be added without further type checking
    * @returns A parsed version of the value
    */
-  public set(key: keyof T & string, value: any, isRaw = false) {
+  public set(
+    key: keyof T & string,
+    value: any,
+    isRaw = false,
+  ): T[keyof T & string] {
     if (isRaw) {
       this.schema[key] = value.toString();
       return this.schema[key];
     }
 
     const keyType = key.slice(-1);
-    if (keyType === 'j') {
+    if (keyType === "j") {
       this.schema[key] = JSON.stringify(value) as any;
-    } else if (keyType === 'U') {
+    } else if (keyType === "U") {
       this.schema[key] = parseInt(value, 10).toString() as any;
     } else {
       this.schema[key] = value.toString();
@@ -47,22 +51,28 @@ class Meta<T extends Schema> {
    * @param key The key
    * @returns The value of the provided key
    */
-  public get(key: keyof T & string) {
+  public get(key: keyof T & string): unknown {
     const keyType = key.slice(-1);
 
-    if (keyType === 'b') {
-      return this.schema[key] === 'true';
+    if (keyType === "b") {
+      return this.schema[key] === "true";
     }
 
-    if (keyType === 'j') {
-      return typeof this.schema[key] !== 'undefined' ? JSON.parse(this.schema[key]!) : {};
+    if (keyType === "j") {
+      return typeof this.schema[key] !== "undefined"
+        ? JSON.parse(this.schema[key]!)
+        : {};
     }
 
-    if (keyType === 'U') {
-      return typeof this.schema[key] !== 'undefined' ? parseInt(this.schema[key]!, 10) : undefined;
+    if (keyType === "U") {
+      return typeof this.schema[key] !== "undefined"
+        ? parseInt(this.schema[key]!, 10)
+        : undefined;
     }
 
-    return typeof this.schema[key] !== 'undefined' ? this.schema[key]!.toString() : '';
+    return typeof this.schema[key] !== "undefined"
+      ? this.schema[key]!.toString()
+      : "";
   }
 
   /**
@@ -71,7 +81,9 @@ class Meta<T extends Schema> {
    * @param isRaw Whether the values are raw
    */
   public update(schema: Partial<T>, isRaw = false) {
-    Object.keys(schema).forEach((prop: keyof T & string) => this.set(prop, schema[prop], isRaw));
+    Object.keys(schema).forEach((prop: keyof T & string) =>
+      this.set(prop, schema[prop], isRaw)
+    );
   }
 
   /**

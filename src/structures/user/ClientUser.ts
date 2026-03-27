@@ -1,6 +1,6 @@
-import User from './User';
-import type { ClientUserData } from '../../../resources/structs';
-import type Client from '../../Client';
+import User from "./User.ts";
+import type { ClientUserData } from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents the user of a client
@@ -57,8 +57,8 @@ class ClientUser extends User {
   public preferredLanguage: string;
 
   /**
-     * Whether the client's Epic Games account can update its display name
-     */
+   * Whether the client's Epic Games account can update its display name
+   */
   public canUpdateDisplayName: boolean;
 
   /**

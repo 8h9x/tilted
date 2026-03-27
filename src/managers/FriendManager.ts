@@ -1,22 +1,22 @@
-import { Collection } from '@discordjs/collection';
-import Friend from '../structures/friend/Friend';
-import FriendNotFoundError from '../exceptions/FriendNotFoundError';
-import Endpoints from '../../resources/Endpoints';
-import UserNotFoundError from '../exceptions/UserNotFoundError';
-import DuplicateFriendshipError from '../exceptions/DuplicateFriendshipError';
-import FriendshipRequestAlreadySentError from '../exceptions/FriendshipRequestAlreadySentError';
-import InviteeFriendshipsLimitExceededError from '../exceptions/InviteeFriendshipsLimitExceededError';
-import InviteeFriendshipRequestLimitExceededError from '../exceptions/InviteeFriendshipRequestLimitExceededError';
-import InviteeFriendshipSettingsError from '../exceptions/InviteeFriendshipSettingsError';
-import OfferNotFoundError from '../exceptions/OfferNotFoundError';
-import SentFriendMessage from '../structures/friend/SentFriendMessage';
-import BasePendingFriend from '../structures/friend/BasePendingFriend';
-import Base from '../Base';
-import { AuthSessionStoreKey } from '../../resources/enums';
-import EpicgamesAPIError from '../exceptions/EpicgamesAPIError';
-import type Client from '../Client';
-import type OutgoingPendingFriend from '../structures/friend/OutgoingPendingFriend';
-import type IncomingPendingFriend from '../structures/friend/IncomingPendingFriend';
+import { Collection } from "@discordjs/collection";
+import Friend from "../structures/friend/Friend.ts";
+import FriendNotFoundError from "../exceptions/FriendNotFoundError.ts";
+import Endpoints from "../resources/Endpoints.ts";
+import UserNotFoundError from "../exceptions/UserNotFoundError.ts";
+import DuplicateFriendshipError from "../exceptions/DuplicateFriendshipError.ts";
+import FriendshipRequestAlreadySentError from "../exceptions/FriendshipRequestAlreadySentError.ts";
+import InviteeFriendshipsLimitExceededError from "../exceptions/InviteeFriendshipsLimitExceededError.ts";
+import InviteeFriendshipRequestLimitExceededError from "../exceptions/InviteeFriendshipRequestLimitExceededError.ts";
+import InviteeFriendshipSettingsError from "../exceptions/InviteeFriendshipSettingsError.ts";
+import OfferNotFoundError from "../exceptions/OfferNotFoundError.ts";
+import SentFriendMessage from "../structures/friend/SentFriendMessage.ts";
+import BasePendingFriend from "../structures/friend/BasePendingFriend.ts";
+import Base from "../Base.ts";
+import { AuthSessionStoreKey } from "../resources/enums.ts";
+import EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
+import type Client from "../Client.ts";
+import type OutgoingPendingFriend from "../structures/friend/OutgoingPendingFriend.ts";
+import type IncomingPendingFriend from "../structures/friend/IncomingPendingFriend.ts";
 
 class FriendManager extends Base {
   /**
@@ -27,7 +27,10 @@ class FriendManager extends Base {
   /**
    * Pending friend requests (incoming or outgoing)
    */
-  public pendingList: Collection<string, IncomingPendingFriend | OutgoingPendingFriend>;
+  public pendingList: Collection<
+    string,
+    IncomingPendingFriend | OutgoingPendingFriend
+  >;
 
   constructor(constr: Client) {
     super(constr);
@@ -35,7 +38,7 @@ class FriendManager extends Base {
     this.pendingList = new Collection();
   }
 
-  public resolve(friend: string | Friend) {
+  public resolve(friend: string | Friend): Friend | undefined {
     if (friend instanceof Friend) {
       return this.list.get(friend.id);
     }
@@ -47,7 +50,9 @@ class FriendManager extends Base {
     return this.list.find((f) => f.displayName === friend);
   }
 
-  public resolvePending(pendingFriend: string | BasePendingFriend) {
+  public resolvePending(
+    pendingFriend: string | BasePendingFriend,
+  ): IncomingPendingFriend | OutgoingPendingFriend | undefined {
     if (pendingFriend instanceof BasePendingFriend) {
       return this.pendingList.get(pendingFriend.id);
     }
@@ -76,26 +81,29 @@ class FriendManager extends Base {
     if (!userID) throw new UserNotFoundError(friend);
 
     try {
-      await this.client.http.epicgamesRequest({
-        method: 'POST',
-        url: `${Endpoints.FRIEND_ADD}/${this.client.user.self!.id}/${userID}`,
-      }, AuthSessionStoreKey.Fortnite);
+      await this.client.http.epicgamesRequest(
+        {
+          method: "POST",
+          url: `${Endpoints.FRIEND_ADD}/${this.client.user.self!.id}/${userID}`,
+        },
+        AuthSessionStoreKey.Fortnite,
+      );
     } catch (e) {
       if (e instanceof EpicgamesAPIError) {
         switch (e.code) {
-          case 'errors.com.epicgames.friends.duplicate_friendship':
+          case "errors.com.epicgames.friends.duplicate_friendship":
             throw new DuplicateFriendshipError(friend);
-          case 'errors.com.epicgames.friends.friend_request_already_sent':
+          case "errors.com.epicgames.friends.friend_request_already_sent":
             throw new FriendshipRequestAlreadySentError(friend);
-          case 'errors.com.epicgames.friends.inviter_friendships_limit_exceeded':
+          case "errors.com.epicgames.friends.inviter_friendships_limit_exceeded":
             throw new InviteeFriendshipsLimitExceededError(friend);
-          case 'errors.com.epicgames.friends.invitee_friendships_limit_exceeded':
+          case "errors.com.epicgames.friends.invitee_friendships_limit_exceeded":
             throw new InviteeFriendshipsLimitExceededError(friend);
-          case 'errors.com.epicgames.friends.incoming_friendships_limit_exceeded':
+          case "errors.com.epicgames.friends.incoming_friendships_limit_exceeded":
             throw new InviteeFriendshipRequestLimitExceededError(friend);
-          case 'errors.com.epicgames.friends.cannot_friend_due_to_target_settings':
+          case "errors.com.epicgames.friends.cannot_friend_due_to_target_settings":
             throw new InviteeFriendshipSettingsError(friend);
-          case 'errors.com.epicgames.friends.account_not_found':
+          case "errors.com.epicgames.friends.account_not_found":
             throw new UserNotFoundError(friend);
         }
       }
@@ -114,10 +122,15 @@ class FriendManager extends Base {
     const resolvedFriend = this.resolve(friend) ?? this.resolvePending(friend);
     if (!resolvedFriend) throw new FriendNotFoundError(friend);
 
-    await this.client.http.epicgamesRequest({
-      method: 'DELETE',
-      url: `${Endpoints.FRIEND_DELETE}/${this.client.user.self!.id}/friends/${resolvedFriend.id}`,
-    }, AuthSessionStoreKey.Fortnite);
+    await this.client.http.epicgamesRequest(
+      {
+        method: "DELETE",
+        url: `${Endpoints.FRIEND_DELETE}/${
+          this.client.user.self!.id
+        }/friends/${resolvedFriend.id}`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
   }
 
   /**
@@ -131,10 +144,15 @@ class FriendManager extends Base {
 
     if (!resolvedFriend) throw new FriendNotFoundError(friend);
 
-    const mutualFriends = await this.client.http.epicgamesRequest({
-      method: 'GET',
-      url: `${Endpoints.FRIENDS}/${this.client.user.self!.id}/friends/${resolvedFriend.id}/mutual`,
-    }, AuthSessionStoreKey.Fortnite);
+    const mutualFriends = await this.client.http.epicgamesRequest(
+      {
+        method: "GET",
+        url: `${Endpoints.FRIENDS}/${
+          this.client.user.self!.id
+        }/friends/${resolvedFriend.id}/mutual`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
 
     return (mutualFriends as string[])
       .map((f) => this.list.get(f))
@@ -149,24 +167,41 @@ class FriendManager extends Base {
    * @throws {FriendNotFoundError} The user does not exist or is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async checkOfferOwnership(friend: string, offerId: string) {
+  public async checkOfferOwnership(
+    friend: string,
+    offerId: string,
+  ): Promise<boolean> {
     const resolvedFriend = this.resolve(friend);
     if (!resolvedFriend) throw new FriendNotFoundError(friend);
 
     try {
-      await this.client.http.epicgamesRequest({
-        method: 'GET',
-        url: `${Endpoints.BR_GIFT_ELIGIBILITY}/recipient/${resolvedFriend.id}/offer/${encodeURIComponent(offerId)}`,
-      }, AuthSessionStoreKey.Fortnite);
+      await this.client.http.epicgamesRequest(
+        {
+          method: "GET",
+          url:
+            `${Endpoints.BR_GIFT_ELIGIBILITY}/recipient/${resolvedFriend.id}/offer/${
+              encodeURIComponent(
+                offerId,
+              )
+            }`,
+        },
+        AuthSessionStoreKey.Fortnite,
+      );
 
       return false;
     } catch (e) {
       if (e instanceof EpicgamesAPIError) {
-        if (e.code === 'errors.com.epicgames.modules.gamesubcatalog.catalog_out_of_date') {
+        if (
+          e.code ===
+            "errors.com.epicgames.modules.gamesubcatalog.catalog_out_of_date"
+        ) {
           throw new OfferNotFoundError(offerId);
         }
 
-        if (e.code === 'errors.com.epicgames.modules.gamesubcatalog.purchase_not_allowed') {
+        if (
+          e.code ===
+            "errors.com.epicgames.modules.gamesubcatalog.purchase_not_allowed"
+        ) {
           return true;
         }
       }
@@ -182,14 +217,19 @@ class FriendManager extends Base {
    * @throws {FriendNotFoundError} The user does not exist or is not friends with the client
    * @throws {SendMessageError} The messant could not be sent
    */
-  public async sendMessage(friend: string, content: string) {
+  public async sendMessage(
+    friend: string,
+    content: string,
+  ): Promise<SentFriendMessage> {
     const resolvedFriend = this.resolve(friend);
 
     if (!resolvedFriend) {
       throw new FriendNotFoundError(friend);
     }
 
-    const messageId = await this.client.chat.whisperUser(resolvedFriend.id, { body: content });
+    const messageId = await this.client.chat.whisperUser(resolvedFriend.id, {
+      body: content,
+    });
 
     return new SentFriendMessage(this.client, {
       author: this.client.user.self!,

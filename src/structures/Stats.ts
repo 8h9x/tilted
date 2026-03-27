@@ -1,12 +1,16 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-restricted-syntax */
-import Base from '../Base';
-import { createDefaultInputTypeStats, parseStatKey } from '../util/Util';
-import { statsKeyRegex } from '../../resources/constants';
-import type Client from '../Client';
-import type { StatsData, StatsPlaylistTypeData, StatsLevelData } from '../../resources/structs';
-import type User from './user/User';
-import type { RawStatsData } from '../../resources/httpResponses';
+import Base from "../Base.ts";
+import { createDefaultInputTypeStats, parseStatKey } from "../util/Util.ts";
+import { statsKeyRegex } from "../resources/constants.ts";
+import type Client from "../Client.ts";
+import type {
+  StatsData,
+  StatsLevelData,
+  StatsPlaylistTypeData,
+} from "../resources/structs.ts";
+import type User from "./user/User.ts";
+import type { RawStatsData } from "../resources/httpResponses.ts";
 
 /**
  * Represents a user's battle royale stats
@@ -66,46 +70,74 @@ class Stats extends Base {
 
     for (const key of Object.keys(data.stats)) {
       if (statsKeyRegex.test(key)) {
-        const [, statKey, inputType, playlistId]: [string, string, 'keyboardmouse' | 'gamepad' | 'touch', string] = key
-          .match(statsKeyRegex) as any;
+        const [, statKey, inputType, playlistId]: [
+          string,
+          string,
+          "keyboardmouse" | "gamepad" | "touch",
+          string,
+        ] = key.match(statsKeyRegex) as any;
 
-        const playlistType = typeof this.client.config.statsPlaylistTypeParser === 'function'
-          ? this.client.config.statsPlaylistTypeParser(playlistId)
-          : this.getPlaylistStatsType(playlistId);
+        const playlistType =
+          typeof this.client.config.statsPlaylistTypeParser === "function"
+            ? this.client.config.statsPlaylistTypeParser(playlistId)
+            : this.getPlaylistStatsType(playlistId);
 
-        if (playlistType !== 'other') {
-          const [parsedKey, parsedValue] = parseStatKey(statKey, data.stats[key]);
+        if (playlistType !== "other") {
+          const [parsedKey, parsedValue] = parseStatKey(
+            statKey,
+            data.stats[key],
+          );
 
           const inputTypePlaylistStats = this.stats[inputType][playlistType];
           const inputTypeAllStats = this.stats[inputType].overall;
           const allPlaylistStats = this.stats.all[playlistType];
           const allAllStats = this.stats.all.overall;
 
-          if (parsedKey === 'lastModified') {
-            if (!inputTypePlaylistStats.lastModified || (parsedValue as Date).getTime() > inputTypePlaylistStats.lastModified.getTime()) {
-              inputTypePlaylistStats.lastModified = (parsedValue as Date);
+          if (parsedKey === "lastModified") {
+            if (
+              !inputTypePlaylistStats.lastModified ||
+              (parsedValue as Date).getTime() >
+                inputTypePlaylistStats.lastModified.getTime()
+            ) {
+              inputTypePlaylistStats.lastModified = parsedValue as Date;
             }
 
-            if (!inputTypeAllStats.lastModified || (parsedValue as Date).getTime() > inputTypeAllStats.lastModified.getTime()) {
-              inputTypeAllStats.lastModified = (parsedValue as Date);
+            if (
+              !inputTypeAllStats.lastModified ||
+              (parsedValue as Date).getTime() >
+                inputTypeAllStats.lastModified.getTime()
+            ) {
+              inputTypeAllStats.lastModified = parsedValue as Date;
             }
 
-            if (!allPlaylistStats.lastModified || (parsedValue as Date).getTime() > allPlaylistStats.lastModified.getTime()) {
-              allPlaylistStats.lastModified = (parsedValue as Date);
+            if (
+              !allPlaylistStats.lastModified ||
+              (parsedValue as Date).getTime() >
+                allPlaylistStats.lastModified.getTime()
+            ) {
+              allPlaylistStats.lastModified = parsedValue as Date;
             }
 
-            if (!allAllStats.lastModified || (parsedValue as Date).getTime() > allAllStats.lastModified.getTime()) {
-              allAllStats.lastModified = (parsedValue as Date);
+            if (
+              !allAllStats.lastModified ||
+              (parsedValue as Date).getTime() >
+                allAllStats.lastModified.getTime()
+            ) {
+              allAllStats.lastModified = parsedValue as Date;
             }
           } else {
             inputTypePlaylistStats[parsedKey] += parsedValue as number;
-            if (playlistType !== 'ltm') inputTypeAllStats[parsedKey] += parsedValue as number;
+            if (playlistType !== "ltm") {
+              inputTypeAllStats[parsedKey] += parsedValue as number;
+            }
             allPlaylistStats[parsedKey] += parsedValue as number;
-            if (playlistType !== 'ltm') allAllStats[parsedKey] += parsedValue as number;
+            if (playlistType !== "ltm") {
+              allAllStats[parsedKey] += parsedValue as number;
+            }
           }
         }
       } else if (/^s\d\d?_social_bp_level$/.test(key)) {
-        this.levelData[key.split('_')[0]] = {
+        this.levelData[key.split("_")[0]] = {
           level: Math.round(data.stats[key] / 100),
           progress: data.stats[key] % 100,
         };
@@ -113,14 +145,25 @@ class Stats extends Base {
     }
 
     for (const inputTypes of Object.keys(this.stats)) {
-      for (const playlistTypeStats of Object.values(this.stats[inputTypes as keyof StatsData]) as StatsPlaylistTypeData[]) {
-        playlistTypeStats.deaths = playlistTypeStats.matches - playlistTypeStats.wins;
-        playlistTypeStats.kd = playlistTypeStats.kills / (playlistTypeStats.deaths || 1);
-        playlistTypeStats.killsPerMin = playlistTypeStats.kills / (playlistTypeStats.minutesPlayed || 1);
-        playlistTypeStats.killsPerMatch = playlistTypeStats.kills / (playlistTypeStats.matches || 1);
-        playlistTypeStats.scorePerMin = playlistTypeStats.score / (playlistTypeStats.minutesPlayed || 1);
-        playlistTypeStats.scorePerMatch = playlistTypeStats.score / (playlistTypeStats.matches || 1);
-        playlistTypeStats.winRate = playlistTypeStats.wins / (playlistTypeStats.matches || 1);
+      for (
+        const playlistTypeStats of Object.values(
+          this.stats[inputTypes as keyof StatsData],
+        ) as StatsPlaylistTypeData[]
+      ) {
+        playlistTypeStats.deaths = playlistTypeStats.matches -
+          playlistTypeStats.wins;
+        playlistTypeStats.kd = playlistTypeStats.kills /
+          (playlistTypeStats.deaths || 1);
+        playlistTypeStats.killsPerMin = playlistTypeStats.kills /
+          (playlistTypeStats.minutesPlayed || 1);
+        playlistTypeStats.killsPerMatch = playlistTypeStats.kills /
+          (playlistTypeStats.matches || 1);
+        playlistTypeStats.scorePerMin = playlistTypeStats.score /
+          (playlistTypeStats.minutesPlayed || 1);
+        playlistTypeStats.scorePerMatch = playlistTypeStats.score /
+          (playlistTypeStats.matches || 1);
+        playlistTypeStats.winRate = playlistTypeStats.wins /
+          (playlistTypeStats.matches || 1);
       }
     }
   }
@@ -129,20 +172,38 @@ class Stats extends Base {
    * Returns the playlist stats type by the playlist id
    * @param playlistID The playlist ID
    */
-  private getPlaylistStatsType(playlistID: string): 'other' | 'solo' | 'duo' | 'squad' | 'ltm' {
-    const playlist = playlistID.toLowerCase().replace('playlist_', '');
+  private getPlaylistStatsType(
+    playlistID: string,
+  ): "other" | "solo" | "duo" | "squad" | "ltm" {
+    const playlist = playlistID.toLowerCase().replace("playlist_", "");
 
-    if (['creative', 'respawn', '16'].some((s) => playlist.includes(s))) return 'other';
+    if (["creative", "respawn", "16"].some((s) => playlist.includes(s))) {
+      return "other";
+    }
 
-    if (!['default', 'classic', 'showdown', 'vamp',
-      'unvaulted', 'toss', 'fill', 'heavy', 'tank', 'melt'].some((s) => playlist.includes(s))) return 'ltm';
+    if (
+      ![
+        "default",
+        "classic",
+        "showdown",
+        "vamp",
+        "unvaulted",
+        "toss",
+        "fill",
+        "heavy",
+        "tank",
+        "melt",
+      ].some((s) => playlist.includes(s))
+    ) {
+      return "ltm";
+    }
 
-    if (playlist.includes('solo')) return 'solo';
-    if (playlist.includes('duo')) return 'duo';
-    if (playlist.includes('trio')) return 'squad';
-    if (playlist.includes('squad')) return 'squad';
+    if (playlist.includes("solo")) return "solo";
+    if (playlist.includes("duo")) return "duo";
+    if (playlist.includes("trio")) return "squad";
+    if (playlist.includes("squad")) return "squad";
 
-    return 'other';
+    return "other";
   }
 }
 

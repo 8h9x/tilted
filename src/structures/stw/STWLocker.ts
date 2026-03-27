@@ -1,7 +1,10 @@
-import STWItem from './STWItem';
-import type Client from '../../Client';
-import type { STWProfileLockerData } from '../../../resources/httpResponses';
-import type { STWLockerBannerData, STWLockerSlotsData } from '../../../resources/structs';
+import STWItem from "./STWItem.ts";
+import type Client from "../../Client.ts";
+import type { STWProfileLockerData } from "../../resources/httpResponses.ts";
+import type {
+  STWLockerBannerData,
+  STWLockerSlotsData,
+} from "../../resources/structs.ts";
 
 /**
  * Represents a Save The World profile's locker

@@ -1,10 +1,11 @@
-import EpicgamesServerStatusIncident from './EpicgamesServerStatusIncident';
-import type Client from '../Client';
+import EpicgamesServerStatusIncident from "./EpicgamesServerStatusIncident.ts";
+import type Client from "../Client.ts";
 
 /**
  * Represents an Epicgames server status
  */
-class EpicgamesServerStatusScheduledMainteance extends EpicgamesServerStatusIncident {
+class EpicgamesServerStatusScheduledMainteance
+  extends EpicgamesServerStatusIncident {
   /**
    * The time the mainteance is scheduled for
    */

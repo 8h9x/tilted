@@ -1,4 +1,5 @@
-import type { StreamError } from 'stanza/protocol';
+// @ts-ignore stanza/protocol is not in package exports
+import type { StreamError } from "stanza/protocol";
 
 /**
  * Represents an error that is thrown when the XMPP connection fails to be established
@@ -19,8 +20,9 @@ class XMPPConnectionError extends Error {
    */
   constructor(error: StreamError) {
     super();
-    this.name = 'XMPPConnectionError';
-    this.message = `The XMPP connection failed to be established: ${error.condition} - ${error.text}`;
+    this.name = "XMPPConnectionError";
+    this.message =
+      `The XMPP connection failed to be established: ${error.condition} - ${error.text}`;
 
     this.condition = error.condition;
     this.text = error.text;

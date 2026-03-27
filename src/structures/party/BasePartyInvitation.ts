@@ -1,9 +1,9 @@
-import Base from '../../Base';
-import type Client from '../../Client';
-import type ClientParty from './ClientParty';
-import type ClientUser from '../user/ClientUser';
-import type Friend from '../friend/Friend';
-import type Party from './Party';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import type ClientParty from "./ClientParty.ts";
+import type ClientUser from "../user/ClientUser.ts";
+import type Friend from "../friend/Friend.ts";
+import type Party from "./Party.ts";
 
 /**
  * Represents a party invitation (either incoming or outgoing)
@@ -46,7 +46,13 @@ abstract class BasePartyInvitation extends Base {
    * @param receiver The friend (or the client user) who received this invitation
    * @param data The invitation data
    */
-  constructor(client: Client, party: Party | ClientParty, sender: Friend | ClientUser, receiver: Friend | ClientUser, data: any) {
+  constructor(
+    client: Client,
+    party: Party | ClientParty,
+    sender: Friend | ClientUser,
+    receiver: Friend | ClientUser,
+    data: any,
+  ) {
     super(client);
 
     this.party = party;
@@ -61,7 +67,7 @@ abstract class BasePartyInvitation extends Base {
   /**
    * Whether this invitation expired
    */
-  public get isExpired() {
+  public get isExpired(): boolean {
     return Date.now() > this.expiresAt.getTime();
   }
 }

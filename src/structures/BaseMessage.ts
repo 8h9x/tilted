@@ -1,10 +1,10 @@
-import Base from '../Base';
-import type { MessageData } from '../../resources/structs';
-import type Client from '../Client';
-import type ClientPartyMember from './party/ClientPartyMember';
-import type ClientUser from './user/ClientUser';
-import type Friend from './friend/Friend';
-import type PartyMember from './party/PartyMember';
+import Base from "../Base.ts";
+import type { MessageData } from "../resources/structs.ts";
+import type Client from "../Client.ts";
+import type ClientPartyMember from "./party/ClientPartyMember.ts";
+import type ClientUser from "./user/ClientUser.ts";
+import type Friend from "./friend/Friend.ts";
+import type PartyMember from "./party/PartyMember.ts";
 
 /**
  * Represents a message

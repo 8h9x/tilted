@@ -1,6 +1,9 @@
-import Base from '../Base';
-import type Client from '../Client';
-import type { NewsMessageVideoData } from '../../resources/structs';
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type {
+  BlurlStream,
+  NewsMessageVideoData,
+} from "../resources/structs.ts";
 
 /**
  * Represents a fortnite news message video
@@ -59,9 +62,9 @@ class NewsMessageVideo extends Base {
 
   /**
    * Downloads the video
-   * @throws {AxiosError}
+   * @throws {HTTPError}
    */
-  public async download() {
+  public async download(): Promise<BlurlStream> {
     return this.client.downloadBlurlStream(this.id);
   }
 }

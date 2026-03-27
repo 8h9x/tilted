@@ -1,10 +1,14 @@
-import STWSchematic from './STWSchematic';
-import type { STWSchematicEvoType, STWSchematicMeleeSubType, STWSchematicRangedSubType } from '../../../resources/structs';
+import STWSchematic from "./STWSchematic.ts";
+import type {
+  STWSchematicEvoType,
+  STWSchematicMeleeSubType,
+  STWSchematicRangedSubType,
+} from "../../resources/structs.ts";
 
 class STWWeaponSchematic extends STWSchematic {
-  public type!: 'ranged' | 'melee';
-  public subType!: STWSchematicRangedSubType | STWSchematicMeleeSubType;
-  public evoType!: STWSchematicEvoType;
+  declare public type: "ranged" | "melee";
+  declare public subType: STWSchematicRangedSubType | STWSchematicMeleeSubType;
+  declare public evoType: STWSchematicEvoType;
 }
 
 export default STWWeaponSchematic;

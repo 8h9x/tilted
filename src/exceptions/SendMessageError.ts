@@ -1,6 +1,6 @@
-import type { SentMessageType } from '../../resources/structs';
-import type ClientParty from '../structures/party/ClientParty';
-import type Friend from '../structures/friend/Friend';
+import type { SentMessageType } from "../resources/structs.ts";
+import type ClientParty from "../structures/party/ClientParty.ts";
+import type Friend from "../structures/friend/Friend.ts";
 
 /**
  * Represents an error thrown because a user does not exist
@@ -9,7 +9,7 @@ class SendMessageError extends Error {
   /**
    * The message related to this error
    */
-  public message: string;
+  public override message: string;
 
   /**
    * The message's type
@@ -26,9 +26,13 @@ class SendMessageError extends Error {
    * @param type The message's type
    * @param target The message's target
    */
-  constructor(message: string, type: SentMessageType, target: Friend | ClientParty) {
+  constructor(
+    message: string,
+    type: SentMessageType,
+    target: Friend | ClientParty,
+  ) {
     super();
-    this.name = 'SendMessageError';
+    this.name = "SendMessageError";
 
     this.message = message;
     this.type = type;

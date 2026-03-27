@@ -1,8 +1,8 @@
-import Base from '../Base';
-import AsyncLock from '../util/AsyncLock';
-import type Client from '../Client';
-import type { AuthData } from '../../resources/structs';
-import type { AuthSessionType } from '../../resources/enums';
+import Base from "../Base.ts";
+import AsyncLock from "../util/AsyncLock.ts";
+import type Client from "../Client.ts";
+import type { AuthData } from "../resources/structs.ts";
+import type { AuthSessionType } from "../resources/enums.ts";
 
 /**
  * Represents an auth session
@@ -56,7 +56,7 @@ abstract class AuthSession<T extends AuthSessionType> extends Base {
     this.refreshLock = new AsyncLock();
   }
 
-  public get isExpired() {
+  public get isExpired(): boolean {
     return this.expiresAt.getTime() < Date.now();
   }
 }

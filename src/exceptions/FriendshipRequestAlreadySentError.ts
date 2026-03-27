@@ -12,7 +12,7 @@ class FriendshipRequestAlreadySentError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'FriendshipRequestAlreadySentError';
+    this.name = "FriendshipRequestAlreadySentError";
     this.message = `The client already sent a friendship request to "${query}"`;
 
     this.query = query;

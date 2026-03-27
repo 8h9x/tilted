@@ -1,9 +1,9 @@
-import Endpoints from '../../../resources/Endpoints';
-import Base from '../../Base';
-import { AuthSessionStoreKey } from '../../../resources/enums';
-import type Client from '../../Client';
-import type ClientParty from './ClientParty';
-import type User from '../user/User';
+import Endpoints from "../../resources/Endpoints.ts";
+import Base from "../../Base.ts";
+import { AuthSessionStoreKey } from "../../resources/enums.ts";
+import type Client from "../../Client.ts";
+import type ClientParty from "./ClientParty.ts";
+import type User from "../user/User.ts";
 
 /**
  * Represents a party member join confirmation request
@@ -41,7 +41,7 @@ class PartyMemberConfirmation extends Base {
   /**
    * Whether the join confirmation is still active (can be confirmed / rejected)
    */
-  public get isActive() {
+  public get isActive(): boolean {
     return this.party.pendingMemberConfirmations.has(this.user.id);
   }
 
@@ -50,10 +50,14 @@ class PartyMemberConfirmation extends Base {
    * @throws {EpicgamesAPIError}
    */
   public async confirm() {
-    await this.client.http.epicgamesRequest({
-      method: 'POST',
-      url: `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.user.id}/confirm`,
-    }, AuthSessionStoreKey.Fortnite);
+    await this.client.http.epicgamesRequest(
+      {
+        method: "POST",
+        url:
+          `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.user.id}/confirm`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
 
     this.party.pendingMemberConfirmations.delete(this.user.id);
   }
@@ -63,10 +67,14 @@ class PartyMemberConfirmation extends Base {
    * @throws {EpicgamesAPIError}
    */
   public async reject() {
-    await this.client.http.epicgamesRequest({
-      method: 'POST',
-      url: `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.user.id}/reject`,
-    }, AuthSessionStoreKey.Fortnite);
+    await this.client.http.epicgamesRequest(
+      {
+        method: "POST",
+        url:
+          `${Endpoints.BR_PARTY}/parties/${this.party.id}/members/${this.user.id}/reject`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
 
     this.party.pendingMemberConfirmations.delete(this.user.id);
   }

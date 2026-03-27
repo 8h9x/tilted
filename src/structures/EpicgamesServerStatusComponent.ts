@@ -1,6 +1,6 @@
-import Base from '../Base';
-import type Client from '../Client';
-import type { EpicgamesServerStatusData } from '../../resources/structs';
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type { EpicgamesServerStatusData } from "../resources/structs.ts";
 
 /**
  * Represents an Epicgames server status
@@ -77,7 +77,11 @@ class EpicgamesServerStatusComponent extends Base {
    * @param data The server status component data
    * @param components The server status components
    */
-  constructor(client: Client, data: EpicgamesServerStatusData['components'][0], components: EpicgamesServerStatusData['components']) {
+  constructor(
+    client: Client,
+    data: EpicgamesServerStatusData["components"][0],
+    components: EpicgamesServerStatusData["components"],
+  ) {
     super(client);
 
     this.id = data.id;

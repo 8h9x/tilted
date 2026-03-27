@@ -12,7 +12,7 @@ class MatchNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'MatchNotFoundError';
+    this.name = "MatchNotFoundError";
     this.message = `The match with the session id "${query}" does not exist`;
 
     this.query = query;

@@ -1,7 +1,7 @@
-import Base from '../Base';
-import type Client from '../Client';
-import type User from './user/User';
-import type { CreatorCodeData } from '../../resources/structs';
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type User from "./user/User.ts";
+import type { CreatorCodeData } from "../resources/structs.ts";
 
 /**
  * Represents a Support-A-Creator code
@@ -36,7 +36,7 @@ class CreatorCode extends Base {
 
     this.code = data.slug;
     this.owner = data.owner;
-    this.isEnabled = data.status === 'ACTIVE';
+    this.isEnabled = data.status === "ACTIVE";
     this.isVerified = data.verified;
   }
 }

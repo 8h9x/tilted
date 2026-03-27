@@ -1,9 +1,12 @@
-import Base from '../../Base';
-import type Client from '../../Client';
-import type Friend from './Friend';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import type Friend from "./Friend.ts";
 import type {
-  FriendPresenceData, PresenceGameplayStats, Platform, PresenceOnlineType,
-} from '../../../resources/structs';
+  FriendPresenceData,
+  Platform,
+  PresenceGameplayStats,
+  PresenceOnlineType,
+} from "../../resources/structs.ts";
 
 /**
  * Represents a friend's presence
@@ -99,36 +102,57 @@ class FriendPresence extends Base {
    * @param data The presence data
    * @param friend The friend this presence belongs to
    */
-  constructor(client: Client, data: FriendPresenceData, friend: Friend, show: PresenceOnlineType, from: string) {
+  constructor(
+    client: Client,
+    data: FriendPresenceData,
+    friend: Friend,
+    show: PresenceOnlineType,
+    from: string,
+  ) {
     super(client);
 
     this.friend = friend;
     this.status = data.Status;
     this.onlineType = show;
-    this.platform = from.match(/(?<=\/.+?:.+?:).+(?=::)/g)?.[0] as Platform | undefined;
+    this.platform = from.match(/(?<=\/.+?:.+?:).+(?=::)/g)?.[0] as
+      | Platform
+      | undefined;
     this.receivedAt = new Date();
     this.isPlaying = data.bIsPlaying || false;
     this.isJoinable = data.bIsJoinable || false;
     this.hasVoiceSupport = data.bHasVoiceSupport || false;
     this.sessionId = data.SessionId;
-    this.homebaseRating = data.Properties && data.Properties.FortBasicInfo_j ? data.Properties.FortBasicInfo_j.homeBaseRating : undefined;
+    this.homebaseRating = data.Properties && data.Properties.FortBasicInfo_j
+      ? data.Properties.FortBasicInfo_j.homeBaseRating
+      : undefined;
     this.subGame = data.Properties ? data.Properties.FortSubGame_i : undefined;
-    this.isInUnjoinableMatch = data.Properties ? data.Properties.InUnjoinableMatch_b : false;
-    this.playlist = data.Properties ? data.Properties.GamePlaylistName_s : undefined;
-    this.partySize = data.Properties && data.Properties.Event_PartySize_s ? parseInt(data.Properties.Event_PartySize_s, 10) : undefined;
+    this.isInUnjoinableMatch = data.Properties
+      ? data.Properties.InUnjoinableMatch_b
+      : false;
+    this.playlist = data.Properties
+      ? data.Properties.GamePlaylistName_s
+      : undefined;
+    this.partySize = data.Properties && data.Properties.Event_PartySize_s
+      ? parseInt(data.Properties.Event_PartySize_s, 10)
+      : undefined;
     this.partyMaxSize = data.Properties && data.Properties.Event_PartyMaxSize_s
-      ? parseInt(data.Properties.Event_PartyMaxSize_s, 10) : undefined;
-    this.gameSessionJoinKey = data.Properties ? data.Properties.GameSessionJoinKey_s : undefined;
+      ? parseInt(data.Properties.Event_PartyMaxSize_s, 10)
+      : undefined;
+    this.gameSessionJoinKey = data.Properties
+      ? data.Properties.GameSessionJoinKey_s
+      : undefined;
 
-    const serverPlayerCount = data.Properties && data.Properties.ServerPlayerCount_i
-      ? parseInt(data.Properties.ServerPlayerCount_i, 10) : undefined;
+    const serverPlayerCount =
+      data.Properties && data.Properties.ServerPlayerCount_i
+        ? parseInt(data.Properties.ServerPlayerCount_i, 10)
+        : undefined;
     this.gameplayStats = undefined;
 
     if (data.Properties && data.Properties.FortGameplayStats_j) {
       const gps = data.Properties.FortGameplayStats_j;
 
       this.gameplayStats = {
-        kills: typeof gps.numKills === 'number' ? gps.numKills : undefined,
+        kills: typeof gps.numKills === "number" ? gps.numKills : undefined,
         fellToDeath: gps.bFellToDeath,
         serverPlayerCount,
       };

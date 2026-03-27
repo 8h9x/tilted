@@ -1,13 +1,14 @@
-import BasePartyJoinRequest from './BasePartyJoinRequest';
-import type ClientUser from '../user/ClientUser';
-import type Friend from '../friend/Friend';
+import BasePartyJoinRequest from "./BasePartyJoinRequest.ts";
+import type SentPartyInvitation from "./SentPartyInvitation.ts";
+import type ClientUser from "../user/ClientUser.ts";
+import type Friend from "../friend/Friend.ts";
 
 /**
  * Represents an incoming party join request
  */
 class ReceivedPartyJoinRequest extends BasePartyJoinRequest {
-  public receiver!: ClientUser;
-  public sender!: Friend;
+  declare public receiver: ClientUser;
+  declare public sender: Friend;
 
   /**
    * Accepts the join request. If it expired, a normal invite will be sent
@@ -15,7 +16,7 @@ class ReceivedPartyJoinRequest extends BasePartyJoinRequest {
    * @throws {PartyMaxSizeReachedError} The party reached its max size
    * @throws {EpicgamesAPIError}
    */
-  public async accept() {
+  public async accept(): Promise<SentPartyInvitation> {
     return this.client.invite(this.sender.id);
   }
 }

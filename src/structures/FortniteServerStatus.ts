@@ -1,6 +1,9 @@
-import Base from '../Base';
-import type Client from '../Client';
-import type { LightswitchData, LightswitchLauncherInfo } from '../../resources/structs';
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type {
+  LightswitchData,
+  LightswitchLauncherInfo,
+} from "../resources/structs.ts";
 
 /**
  * Represents a Fortnite server status

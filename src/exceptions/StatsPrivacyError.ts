@@ -12,7 +12,7 @@ class StatsPrivacyError extends Error {
    */
   constructor(user: string) {
     super();
-    this.name = 'StatsPrivacyError';
+    this.name = "StatsPrivacyError";
     this.message = `The user "${user}" set their stats to private`;
 
     this.user = user;

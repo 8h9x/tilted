@@ -1,8 +1,11 @@
-import Base from '../Base';
-import Image from './Image';
-import NewsMessageVideo from './NewsMessageVideo';
-import type Client from '../Client';
-import type { NewsMessageOffer, NewsMessagePlaylist } from '../../resources/structs';
+import Base from "../Base.ts";
+import Image from "./Image.ts";
+import NewsMessageVideo from "./NewsMessageVideo.ts";
+import type Client from "../Client.ts";
+import type {
+  NewsMessageOffer,
+  NewsMessagePlaylist,
+} from "../resources/structs.ts";
 
 /**
  * Represents a fortnite news message
@@ -74,24 +77,30 @@ class NewsMessage extends Base {
     this.tabTitleOverride = newsData.tabTitleOverride;
     this.tileImage = new Image(this.client, newsData.tileImage?.[0]);
 
-    this.playlist = newsData.playlistId ? {
-      id: newsData.playlistId,
-    } : undefined;
+    this.playlist = newsData.playlistId
+      ? {
+        id: newsData.playlistId,
+      }
+      : undefined;
 
-    this.offer = newsData.offerId ? {
-      id: newsData.offerId,
-      action: newsData.offerAction,
-    } : undefined;
+    this.offer = newsData.offerId
+      ? {
+        id: newsData.offerId,
+        action: newsData.offerAction,
+      }
+      : undefined;
 
-    this.video = newsData.videoUID ? new NewsMessageVideo(this.client, {
-      videoAutoplay: newsData.videoAutoplay,
-      videoFullscreen: newsData.videoFullscreen,
-      videoLoop: newsData.videoLoop,
-      videoMute: newsData.videoMute,
-      videoStreamingEnabled: newsData.videoStreamingEnabled,
-      videoUID: newsData.videoUID,
-      videoVideoString: newsData.videoVideoString,
-    }) : undefined;
+    this.video = newsData.videoUID
+      ? new NewsMessageVideo(this.client, {
+        videoAutoplay: newsData.videoAutoplay,
+        videoFullscreen: newsData.videoFullscreen,
+        videoLoop: newsData.videoLoop,
+        videoMute: newsData.videoMute,
+        videoStreamingEnabled: newsData.videoStreamingEnabled,
+        videoUID: newsData.videoUID,
+        videoVideoString: newsData.videoVideoString,
+      })
+      : undefined;
   }
 }
 

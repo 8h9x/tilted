@@ -1,7 +1,7 @@
-import path from 'path';
-import Base from '../Base';
-import type Client from '../Client';
-import type { ImageData } from '../../resources/structs';
+import path from "node:path";
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type { ImageData } from "../resources/structs.ts";
 
 /**
  * Represents an image
@@ -42,19 +42,13 @@ class Image extends Base {
 
   /**
    * Downloads the image
-   * @throws {AxiosError}
+   * @throws HTTPError
    */
-  public async download(): Promise<Buffer> {
-    const res = await this.client.http.request({
-      method: 'GET',
-      url: this.url,
-      responseType: 'arraybuffer',
-    });
-
-    return res;
+  public download(): Promise<Uint8Array> {
+    return this.client.http.requestBytes({ method: "GET", url: this.url });
   }
 
-  public toString() {
+  public override toString(): string {
     return this.url;
   }
 }

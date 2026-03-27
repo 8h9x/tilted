@@ -1,6 +1,6 @@
-import STWItem from './STWItem';
-import type Client from '../../Client';
-import type { STWProfileResourceData } from '../../../resources/httpResponses';
+import STWItem from "./STWItem.ts";
+import type Client from "../../Client.ts";
+import type { STWProfileResourceData } from "../../resources/httpResponses.ts";
 
 /**
  * Represents a Save The World profile's resource
@@ -29,7 +29,7 @@ class STWResource extends STWItem {
   constructor(client: Client, id: string, data: STWProfileResourceData) {
     super(client, id, data);
 
-    [, this.resourceId] = data.templateId.split(':');
+    [, this.resourceId] = data.templateId.split(":");
 
     this.isSeen = data.attributes.item_seen;
     this.isFavorite = data.attributes.favorite;

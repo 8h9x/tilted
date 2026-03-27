@@ -12,7 +12,7 @@ class DuplicateFriendshipError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'DuplicateFriendshipError';
+    this.name = "DuplicateFriendshipError";
     this.message = `The user "${query}" is already friends with the client`;
 
     this.query = query;

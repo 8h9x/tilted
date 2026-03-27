@@ -1,10 +1,15 @@
 import {
-  calcSTWNonSurvivorPowerLevel, parseSTWHeroTemplateId,
-} from '../../util/Util';
-import STWItem from './STWItem';
-import type { STWProfileHeroData } from '../../../resources/httpResponses';
-import type { STWItemRarity, STWHeroType, STWItemTier } from '../../../resources/structs';
-import type Client from '../../Client';
+  calcSTWNonSurvivorPowerLevel,
+  parseSTWHeroTemplateId,
+} from "../../util/Util.ts";
+import STWItem from "./STWItem.ts";
+import type { STWProfileHeroData } from "../../resources/httpResponses.ts";
+import type {
+  STWHeroType,
+  STWItemRarity,
+  STWItemTier,
+} from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a Save The World profile's hero
@@ -88,7 +93,7 @@ class STWHero extends STWItem {
    * The hero's power level.
    * Depends on the tier, level, and rarity value
    */
-  public get powerLevel() {
+  public get powerLevel(): number {
     return calcSTWNonSurvivorPowerLevel(this.rarity, this.level, this.tier);
   }
 }

@@ -1,11 +1,16 @@
 /* eslint-disable no-underscore-dangle */
-import Base from '../../Base';
-import UserNotFoundError from '../../exceptions/UserNotFoundError';
-import type { BRAccountLevel, ExternalAuths, UserData } from '../../../resources/structs';
-import type Avatar from '../Avatar';
-import type GlobalProfile from '../GlobalProfile';
-import type EventTokens from '../EventTokens';
-import type Client from '../../Client';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import UserNotFoundError from "../../exceptions/UserNotFoundError.ts";
+import type {
+  BRAccountLevel,
+  ExternalAuths,
+  UserData,
+} from "../../resources/structs.ts";
+import type Avatar from "../Avatar.ts";
+import type GlobalProfile from "../GlobalProfile.ts";
+import type EventTokens from "../EventTokens.ts";
+import type Stats from "../Stats.ts";
 
 /**
  * Represents a user
@@ -45,13 +50,17 @@ class User extends Base {
    * The user's display name (In case its undefined, use {@link User#fetch})
    */
   public get displayName(): string | undefined {
-    return this._displayName || (Object.values(this.externalAuths)[0] && (Object.values(this.externalAuths)[0] as any).externalDisplayName);
+    return (
+      this._displayName ||
+      (Object.values(this.externalAuths)[0] &&
+        (Object.values(this.externalAuths)[0] as any).externalDisplayName)
+    );
   }
 
   /**
    * Whether the user is headless (the account is not actually an epicgames account)
    */
-  public get isHeadless() {
+  public get isHeadless(): boolean {
     return !this._displayName;
   }
 
@@ -66,7 +75,7 @@ class User extends Base {
    * @throws {InviteeFriendshipRequestLimitExceededError} The user's incoming friend request limit is reached
    * @throws {EpicgamesAPIError}
    */
-  public async addFriend() {
+  public async addFriend(): Promise<void> {
     return this.client.friend.add(this.id);
   }
 
@@ -75,7 +84,7 @@ class User extends Base {
    * @throws {UserNotFoundError} The user wasn't found
    * @throws {EpicgamesAPIError}
    */
-  public async block() {
+  public async block(): Promise<void> {
     return this.client.user.block(this.id);
   }
 
@@ -96,7 +105,10 @@ class User extends Base {
    * @throws {StatsPrivacyError} The user set their stats to private
    * @throws {EpicgamesAPIError}
    */
-  public async getBRStats(startTime?: number, endTime?: number) {
+  public async getBRStats(
+    startTime?: number,
+    endTime?: number,
+  ): Promise<Stats> {
     return this.client.getBRStats(this.id, startTime, endTime);
   }
 
@@ -104,8 +116,11 @@ class User extends Base {
    * Fetches the battle royale account level for this user
    * @param seasonNumber The season number (eg. 16, 17, 18)
    */
-  public async getBRAccountLevel(seasonNumber: number): Promise<BRAccountLevel | undefined> {
-    return (await this.client.getBRAccountLevel(this.id, seasonNumber))[0].level;
+  public async getBRAccountLevel(
+    seasonNumber: number,
+  ): Promise<BRAccountLevel | undefined> {
+    return (await this.client.getBRAccountLevel(this.id, seasonNumber))[0]
+      .level;
   }
 
   /**

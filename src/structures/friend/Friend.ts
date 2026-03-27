@@ -1,8 +1,11 @@
-import User from '../user/User';
-import type { FriendConnections, FriendData } from '../../../resources/structs';
-import type FriendPresence from './FriendPresence';
-import type PresenceParty from '../party/PresenceParty';
-import type Client from '../../Client';
+import User from "../user/User.ts";
+import type { FriendConnections, FriendData } from "../../resources/structs.ts";
+import type FriendPresence from "./FriendPresence.ts";
+import type PresenceParty from "../party/PresenceParty.ts";
+import type Client from "../../Client.ts";
+import type SentPartyInvitation from "../party/SentPartyInvitation.ts";
+import type SentPartyJoinRequest from "../party/SentPartyJoinRequest.ts";
+import type SentFriendMessage from "./SentFriendMessage.ts";
 
 /**
  * Represents a friend
@@ -78,8 +81,12 @@ class Friend extends User {
    * Whether a user is online or not
    * @readonly
    */
-  public get isOnline() {
-    return !!this.lastAvailableTimestamp && Date.now() - this.lastAvailableTimestamp < this.client.config.friendOfflineTimeout;
+  public get isOnline(): boolean {
+    return (
+      !!this.lastAvailableTimestamp &&
+      Date.now() - this.lastAvailableTimestamp <
+        this.client.config.friendOfflineTimeout
+    );
   }
 
   /**
@@ -87,7 +94,7 @@ class Friend extends User {
    * May be slighly inaccurate as it uses the last received presence
    * @readonly
    */
-  public get isJoinable() {
+  public get isJoinable(): boolean {
     if (!this.isOnline) return false;
     return !!this.presence?.isJoinable;
   }
@@ -97,7 +104,7 @@ class Friend extends User {
    * @throws {FriendNotFoundError} The user is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async remove() {
+  public remove(): Promise<void> {
     return this.client.friend.remove(this.id);
   }
 
@@ -106,7 +113,7 @@ class Friend extends User {
    * @param content The message that will be sent
    * @throws {FriendNotFoundError} The user is not friends with the client
    */
-  public sendMessage(content: string) {
+  public sendMessage(content: string): Promise<SentFriendMessage> {
     return this.client.friend.sendMessage(this.id, content);
   }
 
@@ -115,7 +122,7 @@ class Friend extends User {
    * When the friend confirms this, a party invite will be sent to the client
    * @throws {EpicgamesAPIError}
    */
-  public async sendJoinRequest() {
+  public sendJoinRequest(): Promise<SentPartyJoinRequest> {
     return this.client.sendRequestToJoin(this.id);
   }
 
@@ -126,7 +133,7 @@ class Friend extends User {
    * @throws {PartyMaxSizeReachedError} The party reached its max size
    * @throws {EpicgamesAPIError}
    */
-  public async invite() {
+  public invite(): Promise<SentPartyInvitation> {
     return this.client.invite(this.id);
   }
 
@@ -135,7 +142,7 @@ class Friend extends User {
    * @throws {FriendNotFoundError} The user is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async getMutualFriends() {
+  public getMutualFriends(): Promise<Friend[]> {
     return this.client.friend.getMutual(this.id);
   }
 
@@ -146,7 +153,7 @@ class Friend extends User {
    * @throws {FriendNotFoundError} The user does not exist or is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async checkOfferOwnership(offerId: string) {
+  public checkOfferOwnership(offerId: string): Promise<boolean> {
     return this.client.friend.checkOfferOwnership(this.id, offerId);
   }
 }

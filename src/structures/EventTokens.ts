@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-syntax */
-import Base from '../Base';
-import type User from './user/User';
-import type Client from '../Client';
-import type { ArenaDivisionData } from '../../resources/structs';
+import Base from "../Base.ts";
+import type User from "./user/User.ts";
+import type Client from "../Client.ts";
+import type { ArenaDivisionData } from "../resources/structs.ts";
 
 /**
  * Represents a user's event tokens
@@ -43,25 +43,33 @@ class EventTokens extends Base {
     this.geoIdentity = undefined;
 
     for (const token of this.tokens) {
-      const type = token.split('_')[0];
+      const type = token.split("_")[0];
 
       switch (type) {
-        case 'ARENA': {
-          let [, season, division] = token.split('_');
+        case "ARENA":
+          {
+            let [, season, division] = token.split("_");
 
-          if (!division) {
-            division = season;
-            season = 'S9';
+            if (!division) {
+              division = season;
+              season = "S9";
+            }
+
+            const divisionNumber = parseInt(
+              division.replace("Division", ""),
+              10,
+            );
+
+            if (
+              !this.arenaDivisionData[season.toLowerCase()] ||
+              this.arenaDivisionData[season.toLowerCase()] < divisionNumber
+            ) {
+              this.arenaDivisionData[season.toLowerCase()] = divisionNumber;
+            }
           }
-
-          const divisionNumber = parseInt(division.replace('Division', ''), 10);
-
-          if (!this.arenaDivisionData[season.toLowerCase()] || this.arenaDivisionData[season.toLowerCase()] < divisionNumber) {
-            this.arenaDivisionData[season.toLowerCase()] = divisionNumber;
-          }
-        } break;
-        case 'GroupIdentity':
-          [,, this.geoIdentity] = token.split('_');
+          break;
+        case "GroupIdentity":
+          [, , this.geoIdentity] = token.split("_");
           break;
       }
     }

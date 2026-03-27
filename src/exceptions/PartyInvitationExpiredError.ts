@@ -4,8 +4,9 @@
 class PartyInvitationExpiredError extends Error {
   constructor() {
     super();
-    this.name = 'PartyInvitationExpiredError';
-    this.message = 'The party invitation expired or already got accepted / declined / aborted';
+    this.name = "PartyInvitationExpiredError";
+    this.message =
+      "The party invitation expired or already got accepted / declined / aborted";
   }
 }
 

@@ -4,8 +4,8 @@
 class PartyAlreadyJoinedError extends Error {
   constructor() {
     super();
-    this.name = 'PartyAlreadyJoinedError';
-    this.message = 'The member (or the client) already joined this party';
+    this.name = "PartyAlreadyJoinedError";
+    this.message = "The member (or the client) already joined this party";
   }
 }
 

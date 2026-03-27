@@ -13,7 +13,7 @@ class STOMPConnectionError extends Error {
   constructor(message: string, statusCode?: number) {
     super();
 
-    this.name = 'STOMPConnectionError';
+    this.name = "STOMPConnectionError";
     this.message = `Failed to connect to STOMP: ${message}`;
 
     this.statusCode = statusCode;

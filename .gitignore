@@ -11,6 +11,7 @@ dist/
 .vscode/
 .nova/
 .idea/
+.zed/
 
 # Docs
 docs.json

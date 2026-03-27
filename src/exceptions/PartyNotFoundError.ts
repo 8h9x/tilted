@@ -4,8 +4,8 @@
 class PartyNotFoundError extends Error {
   constructor() {
     super();
-    this.name = 'PartyNotFoundError';
-    this.message = 'The party wasn\'t found';
+    this.name = "PartyNotFoundError";
+    this.message = "The party wasn't found";
   }
 }
 

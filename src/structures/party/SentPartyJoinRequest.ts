@@ -1,13 +1,13 @@
-import BasePartyJoinRequest from './BasePartyJoinRequest';
-import type ClientUser from '../user/ClientUser';
-import type Friend from '../friend/Friend';
+import BasePartyJoinRequest from "./BasePartyJoinRequest.ts";
+import type ClientUser from "../user/ClientUser.ts";
+import type Friend from "../friend/Friend.ts";
 
 /**
  * Represents an outgoing party join request
  */
 class SentPartyJoinRequest extends BasePartyJoinRequest {
-  public receiver!: Friend;
-  public sender!: ClientUser;
+  declare public receiver: Friend;
+  declare public sender: ClientUser;
 }
 
 export default SentPartyJoinRequest;

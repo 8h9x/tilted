@@ -1,5 +1,5 @@
-import type { AxiosRequestConfig } from 'axios';
-import type { EpicgamesAPIErrorData } from '../../resources/httpResponses';
+import type { RequestConfig } from "../http/types.ts";
+import type { EpicgamesAPIErrorData } from "../resources/httpResponses.ts";
 
 /**
  * Represents an HTTP error from the Epicgames API
@@ -13,7 +13,7 @@ class EpicgamesAPIError extends Error {
   /**
    * The URL of the requested API endpoint
    */
-  public url: string;
+  public url: URL | string;
 
   /**
    * The Epicgames error code (Starts with "errors.com.epicgames")
@@ -45,18 +45,24 @@ class EpicgamesAPIError extends Error {
    * @param request The client's request
    * @param status The response's HTTP status
    */
-  constructor(error: EpicgamesAPIErrorData, request: AxiosRequestConfig, status: number) {
+  constructor(
+    error: EpicgamesAPIErrorData,
+    request: RequestConfig,
+    status: number,
+  ) {
     super();
-    this.name = 'EpicgamesAPIError';
+    this.name = "EpicgamesAPIError";
     this.message = error.errorMessage;
 
-    this.method = request.method?.toUpperCase() || 'GET';
-    this.url = request.url || '';
+    this.method = request.method?.toUpperCase() || "GET";
+    this.url = request.url || "";
     this.code = error.errorCode;
-    this.numericCode = typeof error.numericErrorCode === 'number' ? error.numericErrorCode : null;
+    this.numericCode = typeof error.numericErrorCode === "number"
+      ? error.numericErrorCode
+      : null;
     this.messageVars = error.messageVars || [];
     this.httpStatus = status;
-    this.requestData = request.data;
+    this.requestData = request.body;
   }
 }
 

@@ -1,6 +1,6 @@
-import Base from '../../Base';
-import type Client from '../../Client';
-import type { STWProfileItemData } from '../../../resources/httpResponses';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import type { STWProfileItemData } from "../../resources/httpResponses.ts";
 
 /**
  * Represents a Save The World profile's item

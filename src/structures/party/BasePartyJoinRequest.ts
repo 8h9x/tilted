@@ -1,7 +1,7 @@
-import Base from '../../Base';
-import type Client from '../../Client';
-import type ClientUser from '../user/ClientUser';
-import type Friend from '../friend/Friend';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import type ClientUser from "../user/ClientUser.ts";
+import type Friend from "../friend/Friend.ts";
 
 /**
  * Represents an incoming or outgoing party join request
@@ -33,7 +33,12 @@ abstract class BasePartyJoinRequest extends Base {
    * @param receiver The user who received the join request
    * @param data The party confirmation data
    */
-  constructor(client: Client, sender: Friend | ClientUser, receiver: Friend | ClientUser, data: any) {
+  constructor(
+    client: Client,
+    sender: Friend | ClientUser,
+    receiver: Friend | ClientUser,
+    data: any,
+  ) {
     super(client);
 
     this.sender = sender;
@@ -45,7 +50,7 @@ abstract class BasePartyJoinRequest extends Base {
   /**
    * Whether this join request expired
    */
-  public get isExpired() {
+  public get isExpired(): boolean {
     return Date.now() > this.expiresAt.getTime();
   }
 }

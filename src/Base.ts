@@ -1,4 +1,4 @@
-import type Client from './Client';
+import type Client from "./Client.ts";
 
 /**
  * Represents the base class of many other classes
@@ -13,7 +13,7 @@ abstract class Base {
    * @param client The main client
    */
   constructor(client: Client) {
-    Object.defineProperty(this, 'client', { value: client });
+    Object.defineProperty(this, "client", { value: client });
   }
 }
 

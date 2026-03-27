@@ -1,16 +1,16 @@
-import WebSocket from 'ws';
-import Base from '../Base';
-import { AuthSessionStoreKey } from '../../resources/enums';
-import AuthenticationMissingError from '../exceptions/AuthenticationMissingError';
-import Endpoints from '../../resources/Endpoints';
-import ReceivedFriendMessage from '../structures/friend/ReceivedFriendMessage';
-import PartyMessage from '../structures/party/PartyMessage';
-import STOMPConnectionTimeoutError from '../exceptions/STOMPConnectionTimeoutError';
-import STOMPMessage from './STOMPMessage';
-import STOMPConnectionError from '../exceptions/STOMPConnectionError';
-import type { StompMessageData } from './STOMPMessage';
-import type { EOSConnectMessage } from '../../resources/structs';
-import type Client from '../Client';
+import WebSocket from "ws";
+import Base from "../Base.ts";
+import { AuthSessionStoreKey } from "../resources/enums.ts";
+import AuthenticationMissingError from "../exceptions/AuthenticationMissingError.ts";
+import Endpoints from "../resources/Endpoints.ts";
+import ReceivedFriendMessage from "../structures/friend/ReceivedFriendMessage.ts";
+import PartyMessage from "../structures/party/PartyMessage.ts";
+import STOMPConnectionTimeoutError from "../exceptions/STOMPConnectionTimeoutError.ts";
+import STOMPMessage from "./STOMPMessage.ts";
+import STOMPConnectionError from "../exceptions/STOMPConnectionError.ts";
+import type { StompMessageData } from "./STOMPMessage.ts";
+import type { EOSConnectMessage } from "../resources/structs.ts";
+import type Client from "../Client.ts";
 
 /**
  * Represents the client's EOS Connect STOMP manager (i.e. chat messages)
@@ -29,7 +29,7 @@ class STOMP extends Base {
   /**
    * The stomp heartbeat interval
    */
-  private pingInterval?: NodeJS.Timeout;
+  private pingInterval?: ReturnType<typeof setInterval>;
 
   /**
    * The amount of times the stomp connection has been retried
@@ -51,25 +51,24 @@ class STOMP extends Base {
   /**
    * Whether the internal websocket is connected
    */
-  public get isConnected() {
-    return this.connection && this.connection.readyState === WebSocket.OPEN;
+  public get isConnected(): boolean {
+    return (
+      (this.connection && this.connection.readyState === WebSocket.OPEN) ||
+      false
+    );
   }
 
   private decodeBody(body?: string): string {
-    if (!body) return '';
-
+    if (!body) return "";
     try {
-      const decoded = Buffer.from(body, 'base64')
-        .toString('utf-8')
-        .replace(/\0+$/, '');
-
+      const decoded = atob(body).replace(/\0+$/, "");
       try {
         return JSON.parse(decoded).msg ?? decoded;
       } catch {
         return decoded;
       }
     } catch {
-      return '';
+      return "";
     }
   }
 
@@ -78,45 +77,52 @@ class STOMP extends Base {
    * @throws {AuthenticationMissingError} When there is no EOS auth to use for STOMP auth
    * @throws {STOMPConnectionError} When the connection failed for any reason
    */
-  public async connect() {
+  public async connect(): Promise<void> {
     if (!this.client.auth.sessions.has(AuthSessionStoreKey.FortniteEOS)) {
       throw new AuthenticationMissingError(AuthSessionStoreKey.FortniteEOS);
     }
 
-    this.client.debug('[STOMP] Connecting...');
+    this.client.debug("[STOMP] Connecting...");
 
     const connectionStartTime = Date.now();
 
     this.connection = new WebSocket(`wss://${Endpoints.EOS_STOMP}`, {
       headers: {
-        Authorization: `Bearer ${this.client.auth.sessions.get(AuthSessionStoreKey.FortniteEOS)!.accessToken}`,
-        'Sec-Websocket-Protocol': 'v10.stomp,v11.stomp,v12.stomp',
-        'Epic-Connect-Device-Id': ' ',
-        'Epic-Connect-Protocol': 'stomp',
+        Authorization: `Bearer ${
+          this.client.auth.sessions.get(AuthSessionStoreKey.FortniteEOS)!
+            .accessToken
+        }`,
+        "Sec-Websocket-Protocol": "v10.stomp,v11.stomp,v12.stomp",
+        "Epic-Connect-Device-Id": " ",
+        "Epic-Connect-Protocol": "stomp",
       },
     });
 
-    return new Promise<void>((res, rej) => {
+    return await new Promise<void>((res, rej) => {
       const connectionTimeout = setTimeout(() => {
         this.disconnect();
-        rej(new STOMPConnectionTimeoutError(this.client.config.stompConnectionTimeout));
+        rej(
+          new STOMPConnectionTimeoutError(
+            this.client.config.stompConnectionTimeout,
+          ),
+        );
       }, this.client.config.stompConnectionTimeout);
 
-      this.connection!.once('open', () => {
+      this.connection!.once("open", () => {
         clearTimeout(connectionTimeout);
 
         this.sendMessage({
-          command: 'CONNECT',
+          command: "CONNECT",
           headers: {
-            'accept-version': '1.0,1.1,1.2',
-            'heart-beat': '35000,0',
+            "accept-version": "1.0,1.1,1.2",
+            "heart-beat": "35000,0",
           },
         });
 
         this.registerEvents(res, rej, connectionStartTime);
       });
 
-      this.connection!.once('error', (err) => {
+      this.connection!.once("error", (err) => {
         this.client.debug(`[STOMP] Connection failed: ${err.message}`);
 
         clearTimeout(connectionTimeout);
@@ -128,107 +134,149 @@ class STOMP extends Base {
   /**
    * Registers the events for the STOMP connection
    */
-  private registerEvents(resolve: () => void, reject: (reason?: unknown) => void, connectionStartTime: number) {
-    this.connection!.on('close', async (code, reason) => {
+  private registerEvents(
+    resolve: () => void,
+    reject: (reason?: unknown) => void,
+    connectionStartTime: number,
+  ) {
+    this.connection!.on("close", async (code, reason) => {
       this.disconnect();
 
       if (this.connectionRetryCount < 2) {
-        this.client.debug('[STOMP] Disconnected, reconnecting in 5 seconds...');
+        this.client.debug("[STOMP] Disconnected, reconnecting in 5 seconds...");
         this.connectionRetryCount += 1;
 
-        await new Promise((res) => setTimeout(res, 5000));
+        await new Promise((res) => this.client.setTimeout(res, 5000));
         await this.connect();
       } else {
-        this.client.debug('[STOMP] Disconnected, retry limit reached');
+        this.client.debug("[STOMP] Disconnected, retry limit reached");
         this.connectionRetryCount = 0;
-        throw new STOMPConnectionError(`STOMP WS disconnected, retry limit reached. Reason: ${reason}`, code);
+        throw new STOMPConnectionError(
+          `STOMP WS disconnected, retry limit reached. Reason: ${reason}`,
+          code,
+        );
       }
     });
 
-    this.connection!.on('message', async (d: any) => {
+    this.connection!.on("message", async (d: any) => {
       const message = STOMPMessage.fromString(d.toString());
 
       switch (message.command) {
-        case 'CONNECTED':
+        case "CONNECTED":
           this.pingInterval = setInterval(() => {
-            if (this.connection && this.connection.readyState === WebSocket.OPEN) {
-              this.connection.send('\n');
+            if (
+              this.connection &&
+              this.connection.readyState === WebSocket.OPEN
+            ) {
+              this.connection.send("\n");
             }
           }, 35000);
 
           this.sendMessage({
-            command: 'SUBSCRIBE',
+            command: "SUBSCRIBE",
             headers: {
-              id: 'sub-0',
-              destination: `${this.client.config.eosDeploymentId}/account/${this.client.user.self!.id}`,
+              id: "sub-0",
+              destination: `${this.client.config.eosDeploymentId}/account/${
+                this.client.user.self!.id
+              }`,
             },
           });
           break;
-        case 'MESSAGE': {
-          if (!message.body) break;
+        case "MESSAGE":
+          {
+            if (!message.body) break;
 
-          const data: EOSConnectMessage = JSON.parse(message.body);
+            const data: EOSConnectMessage = JSON.parse(message.body);
 
-          switch (data.type) {
-            case 'core.connect.v1.connected':
-              this.client.debug(`[STOMP] Successfully connected (${((Date.now() - connectionStartTime) / 1000).toFixed(2)}s)`);
-              this.connectionId = data.connectionId;
-              this.connectionRetryCount = 0;
-              resolve();
-              break;
-            case 'core.connect.v1.connect-failed':
-              this.client.debug(`[STOMP] Connection failed: ${data.statusCode} - ${data.message}`);
+            switch (data.type) {
+              case "core.connect.v1.connected":
+                this.client.debug(
+                  `[STOMP] Successfully connected (${(
+                    (Date.now() - connectionStartTime) /
+                    1000
+                  ).toFixed(2)}s)`,
+                );
+                this.connectionId = data.connectionId;
+                this.connectionRetryCount = 0;
+                resolve();
+                break;
+              case "core.connect.v1.connect-failed":
+                this.client.debug(
+                  `[STOMP] Connection failed: ${data.statusCode} - ${data.message}`,
+                );
 
-              reject(new STOMPConnectionError(data.message, data.statusCode));
-              break;
-            case 'social.chat.v1.NEW_WHISPER': {
-              const { senderId, body, time } = data.payload.message;
-              const friend = this.client.friend.list.get(senderId);
+                reject(new STOMPConnectionError(data.message, data.statusCode));
+                break;
+              case "social.chat.v1.NEW_WHISPER": {
+                const { senderId, body, time } = data.payload.message;
+                const friend = this.client.friend.list.get(senderId);
 
-              if (!friend || senderId === this.client.user.self!.id) return;
+                if (!friend || senderId === this.client.user.self!.id) return;
 
-              const friendMessage = new ReceivedFriendMessage(this.client, {
-                content: this.decodeBody(body),
-                author: friend,
-                id: data.id!,
-                sentAt: new Date(time),
-              });
+                const friendMessage = new ReceivedFriendMessage(this.client, {
+                  content: this.decodeBody(body),
+                  author: friend,
+                  id: data.id!,
+                  sentAt: new Date(time),
+                });
 
-              this.client.emit('friend:message', friendMessage);
-              break;
-            }
-            case 'social.chat.v1.NEW_MESSAGE': {
-              if (data.payload.conversation.type !== 'party') return;
-
-              await this.client.partyLock.wait();
-
-              const { conversation: { conversationId }, message: { senderId, body, time } } = data.payload;
-              const partyId = conversationId.replace('p-', '');
-
-              if (!this.client.party || this.client.party.id !== partyId || senderId === this.client.user.self!.id) {
-                return;
+                this.client.dispatchEvent(
+                  this.client.createEvent("friend:message", {
+                    message: friendMessage,
+                  }),
+                );
+                break;
               }
+              case "social.chat.v1.NEW_MESSAGE": {
+                if (data.payload.conversation.type !== "party") return;
 
-              const authorMember = this.client.party.members.get(senderId);
-              if (!authorMember) return;
+                await this.client.partyLock.wait();
 
-              const partyMessage = new PartyMessage(this.client, {
-                content: this.decodeBody(body),
-                author: authorMember,
-                sentAt: new Date(time),
-                id: data.id!,
-                party: this.client.party,
-              });
+                const {
+                  conversation: { conversationId },
+                  message: { senderId, body, time },
+                } = data.payload;
+                const partyId = conversationId.replace("p-", "");
 
-              this.client.emit('party:member:message', partyMessage);
-              break;
+                if (
+                  !this.client.party ||
+                  this.client.party.id !== partyId ||
+                  senderId === this.client.user.self!.id
+                ) {
+                  return;
+                }
+
+                const authorMember = this.client.party.members.get(senderId);
+                if (!authorMember) return;
+
+                const partyMessage = new PartyMessage(this.client, {
+                  content: this.decodeBody(body),
+                  author: authorMember,
+                  sentAt: new Date(time),
+                  id: data.id!,
+                  party: this.client.party,
+                });
+
+                this.client.dispatchEvent(
+                  this.client.createEvent("party:member:message", {
+                    message: partyMessage,
+                  }),
+                );
+                break;
+              }
+              default:
+                this.client.debug(
+                  `[STOMP] Unknown message type: ${data.type} ${message.body}`,
+                );
             }
-            default:
-              this.client.debug(`[STOMP] Unknown message type: ${data.type} ${message.body}`);
           }
-        } break;
+          break;
         default:
-          this.client.debug(`[STOMP] Unknown command: ${message.command} ${message.body ?? 'no body'}`);
+          this.client.debug(
+            `[STOMP] Unknown command: ${message.command} ${
+              message.body ?? "no body"
+            }`,
+          );
       }
     });
   }
@@ -237,7 +285,7 @@ class STOMP extends Base {
    * Disconnects the STOMP client.
    * Also performs a cleanup
    */
-  public async disconnect() {
+  public disconnect(): void {
     if (this.pingInterval) {
       clearInterval(this.pingInterval);
       this.pingInterval = undefined;

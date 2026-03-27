@@ -1,10 +1,17 @@
 import type {
   LeaderboardDef,
-  TournamentWindowBlackoutPeriod, TournamentWindowData, TournamentWindowMetadata, TournamentWindowResolvedData, TournamentWindowScoreLocation,
-  TournamentWindowTemplateData, TournamentWindowTemplatePayoutTable, TournamentWindowTemplateScoringRule,
+  TournamentWindowBlackoutPeriod,
+  TournamentWindowData,
+  TournamentWindowMetadata,
+  TournamentWindowResolvedData,
+  TournamentWindowResults,
+  TournamentWindowScoreLocation,
+  TournamentWindowTemplateData,
+  TournamentWindowTemplatePayoutTable,
+  TournamentWindowTemplateScoringRule,
   TournamentWindowTemplateTiebreakFormula,
-} from '../../resources/httpResponses';
-import type Tournament from './Tournament';
+} from "../resources/httpResponses.ts";
+import type Tournament from "./Tournament.ts";
 
 /**
  * Represents a Fortnite tournament window
@@ -159,10 +166,13 @@ class TournamentWindow {
    * @param windowData The tournament window's data
    * @param tournamentWindowTemplateData The tournament window's template data
    */
-  constructor(tournament: Tournament, windowData: TournamentWindowData, tournamentWindowTemplateData?: TournamentWindowTemplateData,
-    resolvedData?: TournamentWindowResolvedData[]) 
-    {
-    Object.defineProperty(this, 'tournament', { value: tournament });
+  constructor(
+    tournament: Tournament,
+    windowData: TournamentWindowData,
+    tournamentWindowTemplateData?: TournamentWindowTemplateData,
+    resolvedData?: TournamentWindowResolvedData[],
+  ) {
+    Object.defineProperty(this, "tournament", { value: tournament });
 
     // Window data
     this.id = windowData.eventWindowId;
@@ -178,12 +188,12 @@ class TournamentWindow {
 
     this.resolvedLocations = resolvedData?.[0]?.locations ?? [];
     this.leaderboardDefs = [];
-    resolvedData?.forEach(data => {
+    resolvedData?.forEach((data) => {
       if (data.leaderboardDef) {
         this.leaderboardDefs.push({
           leaderboardDefId: data.leaderboardDef.leaderboardDefId,
           payoutTableId: data.payoutTableId,
-          payoutTable: data.payoutTable
+          payoutTable: data.payoutTable,
         });
       }
     });
@@ -201,7 +211,8 @@ class TournamentWindow {
     // Template data
     this.playlistId = tournamentWindowTemplateData?.playlistId;
     this.matchCap = tournamentWindowTemplateData?.matchCap;
-    this.liveSessionAttributes = tournamentWindowTemplateData?.liveSessionAttributes;
+    this.liveSessionAttributes = tournamentWindowTemplateData
+      ?.liveSessionAttributes;
     this.scoringRules = tournamentWindowTemplateData?.scoringRules;
     this.tiebreakerFormula = tournamentWindowTemplateData?.tiebreakerFormula;
     this.payoutTable = tournamentWindowTemplateData?.payoutTable;
@@ -212,8 +223,16 @@ class TournamentWindow {
    * @param page The results page index
    * @param showLiveSessions Whether to show live sessions
    */
-  public async getResults(page = 0, showLiveSessions = false) {
-    return this.tournament.client.tournaments.getWindowResults(this.tournament.id, this.id, showLiveSessions, page);
+  public async getResults(
+    page = 0,
+    showLiveSessions = false,
+  ): Promise<TournamentWindowResults> {
+    return this.tournament.client.tournaments.getWindowResults(
+      this.tournament.id,
+      this.id,
+      showLiveSessions,
+      page,
+    );
   }
 }
 

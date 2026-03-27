@@ -1,13 +1,22 @@
-import Base from '../Base';
-import TournamentWindow from './TournamentWindow';
+import Base from "../Base.ts";
+import TournamentWindow from "./TournamentWindow.ts";
 import type {
-  PlatformMappings, RegionMappings, TournamentData, TournamentDisplayData, TournamentMetadata,
+  PlatformMappings,
+  RegionMappings,
+  TournamentData,
+  TournamentDisplayData,
+  TournamentMetadata,
   TournamentWindowResolvedData,
-} from '../../resources/httpResponses';
+} from "../resources/httpResponses.ts";
 import type {
-  FullPlatform, Region, TournamentColors, TournamentImages, TournamentTexts, TournamentWindowTemplate,
-} from '../../resources/structs';
-import type Client from '../Client';
+  FullPlatform,
+  Region,
+  TournamentColors,
+  TournamentImages,
+  TournamentTexts,
+  TournamentWindowTemplate,
+} from "../resources/structs.ts";
+import type Client from "../Client.ts";
 
 /**
  * Represents a Fortnite tournament
@@ -109,7 +118,7 @@ class Tournament extends Base {
     tournamentData: TournamentData,
     tournamentDisplayData: TournamentDisplayData,
     templates: TournamentWindowTemplate[],
-    windowsResolvedData?: Map<string, TournamentWindowResolvedData[]>
+    windowsResolvedData?: Map<string, TournamentWindowResolvedData[]>,
   ) {
     super(client);
 
@@ -144,7 +153,8 @@ class Tournament extends Base {
       posterBackImage: tournamentDisplayData.poster_back_image,
       posterFrontImage: tournamentDisplayData.poster_front_image,
       playlistTileImage: tournamentDisplayData.playlist_tile_image,
-      tournamentViewBackgroundImage: tournamentDisplayData.tournament_view_background_image,
+      tournamentViewBackgroundImage:
+        tournamentDisplayData.tournament_view_background_image,
     };
 
     this.texts = {
@@ -161,11 +171,13 @@ class Tournament extends Base {
     };
 
     this.windows = tournamentData.eventWindows.map((w) => {
-    const templateData = templates.find((t) => t.windowId === w.eventWindowId)?.templateData;
-    const resolvedData = windowsResolvedData?.get(w.eventWindowId);
-    
-    return new TournamentWindow(this, w, templateData, resolvedData);
-  });
+      const templateData = templates.find(
+        (t) => t.windowId === w.eventWindowId,
+      )?.templateData;
+      const resolvedData = windowsResolvedData?.get(w.eventWindowId);
+
+      return new TournamentWindow(this, w, templateData, resolvedData);
+    });
   }
 }
 

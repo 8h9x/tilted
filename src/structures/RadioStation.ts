@@ -1,6 +1,7 @@
-import Base from '../Base';
-import Image from './Image';
-import type Client from '../Client';
+import Base from "../Base.ts";
+import Image from "./Image.ts";
+import type Client from "../Client.ts";
+import type { BlurlStream } from "../mod.ts";
 
 /**
  * Represents a battle royale ingame radio station
@@ -40,9 +41,9 @@ class RadioStation extends Base {
 
   /**
    * Downloads the radio station's stream
-   * @throws {AxiosError}
+   * @throws {HTTPError}
    */
-  public async downloadStream() {
+  public async downloadStream(): Promise<BlurlStream> {
     return this.client.downloadBlurlStream(this.resourceId);
   }
 }

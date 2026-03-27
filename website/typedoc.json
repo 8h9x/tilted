@@ -1,0 +1,13 @@
+{
+  "entryPoints": ["../src/mod.ts"],
+  "entryPointStrategy": "expand",
+  "entryFileName": "index",
+  "tsconfig": "../tsconfig.json",
+  "plugin": ["typedoc-plugin-markdown"],
+  "out": "docs/api",
+  "sanitizeComments": true,
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "readme": "none",
+  "skipErrorChecking": true
+}

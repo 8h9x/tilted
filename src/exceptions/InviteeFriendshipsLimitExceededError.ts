@@ -12,7 +12,7 @@ class InviteeFriendshipsLimitExceededError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'InviteeFriendshipsLimitExceededError';
+    this.name = "InviteeFriendshipsLimitExceededError";
     this.message = `The user ${query} reached their friendships limit`;
 
     this.query = query;

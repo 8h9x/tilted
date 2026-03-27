@@ -8,8 +8,7 @@
     "test.js",
     "generateExports.js",
     "tests/client.test.ts",
-    "tests/userManager.test.ts",
-    "jest.config.js"
+    "tests/userManager.test.ts"
   ],
   "exclude": ["resources/**/*.json", "src/**/*.json"]
 }

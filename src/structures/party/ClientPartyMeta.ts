@@ -1,8 +1,8 @@
-import defaultPartyMeta from '../../../resources/defaultPartyMeta.json';
-import PartyMeta from './PartyMeta';
-import type { PartySchema } from '../../../resources/structs';
-import type ClientParty from './ClientParty';
-import type PartyMember from './PartyMember';
+import defaultPartyMeta from "../../resources/defaultPartyMeta.json" with { type: "json" };
+import PartyMeta from "./PartyMeta.ts";
+import type { PartySchema } from "../../resources/structs.ts";
+import type ClientParty from "./ClientParty.ts";
+import type PartyMember from "./PartyMember.ts";
 
 /**
  * Represents the client's party meta
@@ -30,7 +30,7 @@ class ClientPartyMeta extends PartyMeta {
   /**
    * Refreshes the member positions
    */
-  public refreshSquadAssignments() {
+  public refreshSquadAssignments(): string | undefined {
     let i = 0;
     const assignments = [];
 
@@ -43,7 +43,10 @@ class ClientPartyMeta extends PartyMeta {
     }
 
     this.party.members.forEach((m: PartyMember) => {
-      if (m.id !== this.party.client.user.self!.id && !this.party.hiddenMemberIds.has(m.id)) {
+      if (
+        m.id !== this.party.client.user.self!.id &&
+        !this.party.hiddenMemberIds.has(m.id)
+      ) {
         assignments.push({
           memberId: m.id,
           absoluteMemberIdx: i,
@@ -52,9 +55,9 @@ class ClientPartyMeta extends PartyMeta {
       }
     });
 
-    const squadInformation = this.get('Default:SquadInformation_j');
+    const squadInformation = this.get("Default:SquadInformation_j") as any;
 
-    return this.set('Default:SquadInformation_j', {
+    return this.set("Default:SquadInformation_j", {
       ...squadInformation,
       SquadInformation: {
         ...squadInformation.SquadInformation,
@@ -64,11 +67,12 @@ class ClientPartyMeta extends PartyMeta {
   }
 
   public updatePrivacy() {
-    this.set('Default:PrivacySettings_j', {
+    this.set("Default:PrivacySettings_j", {
       PrivacySettings: {
         partyType: this.party.config.privacy.partyType,
         partyInviteRestriction: this.party.config.privacy.inviteRestriction,
-        bOnlyLeaderFriendsCanJoin: this.party.config.privacy.onlyLeaderFriendsCanJoin,
+        bOnlyLeaderFriendsCanJoin:
+          this.party.config.privacy.onlyLeaderFriendsCanJoin,
       },
     });
   }

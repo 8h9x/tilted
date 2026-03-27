@@ -12,7 +12,7 @@ class OfferNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'OfferNotFoundError';
+    this.name = "OfferNotFoundError";
     this.message = `An offer with the id "${query}" does not exist`;
 
     this.query = query;

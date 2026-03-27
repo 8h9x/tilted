@@ -1,6 +1,6 @@
-import Base from '../Base';
-import type Client from '../Client';
-import type { EpicgamesServerStatusIncidentUpdate } from '../../resources/structs';
+import Base from "../Base.ts";
+import type Client from "../Client.ts";
+import type { EpicgamesServerStatusIncidentUpdate } from "../resources/structs.ts";
 
 /**
  * Represents an Epicgames server status
@@ -76,7 +76,9 @@ class EpicgamesServerStatusIncident extends Base {
     this.shortLink = data.short_link;
     this.createdAt = new Date(data.created_at);
     this.updatedAt = data.updated_at ? new Date(data.updated_at) : undefined;
-    this.monitoringAt = data.monitoring_at ? new Date(data.monitoring_at) : undefined;
+    this.monitoringAt = data.monitoring_at
+      ? new Date(data.monitoring_at)
+      : undefined;
     this.resolvedAt = data.resolved_at ? new Date(data.resolved_at) : undefined;
 
     this.incidentUpdates = data.incident_updates.map((u: any) => ({

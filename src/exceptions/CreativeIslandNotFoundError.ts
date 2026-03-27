@@ -12,7 +12,7 @@ class CreativeIslandNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'CreativeIslandNotFoundError';
+    this.name = "CreativeIslandNotFoundError";
     this.message = `A creative island with the code "${query}" does not exist`;
 
     this.query = query;

@@ -1,27 +1,27 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-restricted-syntax */
-import PowerLevelCurves from '../../../resources/PowerLevelCurves';
-import { parseSTWSchematicTemplateId } from '../../util/Util';
-import STWHero from './STWHero';
-import STWHeroLoadout from './STWHeroLoadout';
-import STWItem from './STWItem';
-import STWLocker from './STWLocker';
-import STWMeleeWeaponSchematic from './STWMeleeWeaponSchematic';
-import STWRangedWeaponSchematic from './STWRangedWeaponSchematic';
-import STWResource from './STWResource';
-import STWSchematic from './STWSchematic';
-import STWStats from './STWStats';
-import STWSurvivor from './STWSurvivor';
-import STWTeamPerk from './STWTeamPerk';
-import STWTrapSchematic from './STWTrapSchematic';
-import STWWeaponSchematic from './STWWeaponSchematic';
-import User from '../user/User';
-import type Client from '../../Client';
+import PowerLevelCurves from "../../resources/PowerLevelCurves.ts";
+import { parseSTWSchematicTemplateId } from "../../util/Util.ts";
+import STWHero from "./STWHero.ts";
+import STWHeroLoadout from "./STWHeroLoadout.ts";
+import STWItem from "./STWItem.ts";
+import STWLocker from "./STWLocker.ts";
+import STWMeleeWeaponSchematic from "./STWMeleeWeaponSchematic.ts";
+import STWRangedWeaponSchematic from "./STWRangedWeaponSchematic.ts";
+import STWResource from "./STWResource.ts";
+import STWSchematic from "./STWSchematic.ts";
+import STWStats from "./STWStats.ts";
+import STWSurvivor from "./STWSurvivor.ts";
+import STWTeamPerk from "./STWTeamPerk.ts";
+import STWTrapSchematic from "./STWTrapSchematic.ts";
+import STWWeaponSchematic from "./STWWeaponSchematic.ts";
+import User from "../user/User.ts";
+import type Client from "../../Client.ts";
 import type {
   STWFORTStats,
   STWSurvivorSquads,
   UserData,
-} from '../../../resources/structs';
+} from "../../resources/structs.ts";
 import type {
   STWProfileData,
   STWProfileHeroData,
@@ -30,7 +30,7 @@ import type {
   STWProfileResourceData,
   STWProfileSchematicData,
   STWProfileSurvivorData,
-} from '../../../resources/httpResponses';
+} from "../../resources/httpResponses.ts";
 
 /**
  * Represents a Save The World profile
@@ -74,7 +74,16 @@ class STWProfile extends User {
   /**
    * The profile's items
    */
-  public items: (STWItem | STWSurvivor | STWLocker | STWResource | STWHero | STWHeroLoadout | STWSchematic | STWTeamPerk)[];
+  public items: (
+    | STWItem
+    | STWSurvivor
+    | STWLocker
+    | STWResource
+    | STWHero
+    | STWHeroLoadout
+    | STWSchematic
+    | STWTeamPerk
+  )[];
 
   /**
    * The profile's stats
@@ -101,41 +110,87 @@ class STWProfile extends User {
     this.items = [];
 
     for (const [itemId, item] of Object.entries(data.items)) {
-      const itemType = item.templateId.split(':')[0];
+      const itemType = item.templateId.split(":")[0];
 
       switch (itemType) {
-        case 'Worker':
-          this.items.push(new STWSurvivor(this.client, itemId, item as STWProfileSurvivorData));
+        case "Worker":
+          this.items.push(
+            new STWSurvivor(
+              this.client,
+              itemId,
+              item as STWProfileSurvivorData,
+            ),
+          );
           break;
-        case 'CosmeticLocker':
-          this.items.push(new STWLocker(this.client, itemId, item as STWProfileLockerData));
+        case "CosmeticLocker":
+          this.items.push(
+            new STWLocker(this.client, itemId, item as STWProfileLockerData),
+          );
           break;
-        case 'AccountResource':
-          this.items.push(new STWResource(this.client, itemId, item as STWProfileResourceData));
+        case "AccountResource":
+          this.items.push(
+            new STWResource(
+              this.client,
+              itemId,
+              item as STWProfileResourceData,
+            ),
+          );
           break;
-        case 'Hero':
-          this.items.push(new STWHero(this.client, itemId, item as STWProfileHeroData));
+        case "Hero":
+          this.items.push(
+            new STWHero(this.client, itemId, item as STWProfileHeroData),
+          );
           break;
-        case 'CampaignHeroLoadout':
-          this.items.push(new STWHeroLoadout(this.client, itemId, item as STWProfileHeroLoadoutData));
+        case "CampaignHeroLoadout":
+          this.items.push(
+            new STWHeroLoadout(
+              this.client,
+              itemId,
+              item as STWProfileHeroLoadoutData,
+            ),
+          );
           break;
-        case 'Schematic':
+        case "Schematic":
           switch (parseSTWSchematicTemplateId(item.templateId).type) {
-            case 'melee':
-              this.items.push(new STWMeleeWeaponSchematic(this.client, itemId, item as STWProfileSchematicData));
+            case "melee":
+              this.items.push(
+                new STWMeleeWeaponSchematic(
+                  this.client,
+                  itemId,
+                  item as STWProfileSchematicData,
+                ),
+              );
               break;
-            case 'ranged':
-              this.items.push(new STWRangedWeaponSchematic(this.client, itemId, item as STWProfileSchematicData));
+            case "ranged":
+              this.items.push(
+                new STWRangedWeaponSchematic(
+                  this.client,
+                  itemId,
+                  item as STWProfileSchematicData,
+                ),
+              );
               break;
-            case 'trap':
-              this.items.push(new STWTrapSchematic(this.client, itemId, item as STWProfileSchematicData));
+            case "trap":
+              this.items.push(
+                new STWTrapSchematic(
+                  this.client,
+                  itemId,
+                  item as STWProfileSchematicData,
+                ),
+              );
               break;
             default:
-              this.items.push(new STWSchematic(this.client, itemId, item as STWProfileSchematicData));
+              this.items.push(
+                new STWSchematic(
+                  this.client,
+                  itemId,
+                  item as STWProfileSchematicData,
+                ),
+              );
               break;
           }
           break;
-        case 'TeamPerk':
+        case "TeamPerk":
           this.items.push(new STWTeamPerk(this.client, itemId, item));
           break;
         default:
@@ -149,14 +204,14 @@ class STWProfile extends User {
   /**
    * Returns the profile's survivors
    */
-  public get survivors() {
+  public get survivors(): STWSurvivor[] {
     return this.items.filter((i) => i instanceof STWSurvivor) as STWSurvivor[];
   }
 
   /**
    * The profile's survivor squads
    */
-  public get survivorSquads() {
+  public get survivorSquads(): STWSurvivorSquads {
     const survivorSquads: STWSurvivorSquads = {
       trainingteam: [],
       fireteamalpha: [],
@@ -178,57 +233,64 @@ class STWProfile extends User {
   /**
    * The profile's locker
    */
-  public get locker() {
+  public get locker(): STWLocker {
     return this.items.find((i) => i instanceof STWLocker) as STWLocker;
   }
 
   /**
    * The profile's resources
    */
-  public get resources() {
+  public get resources(): STWResource[] {
     return this.items.filter((i) => i instanceof STWResource) as STWResource[];
   }
 
   /**
    * The profile's heroes
    */
-  public get heroes() {
+  public get heroes(): STWHero[] {
     return this.items.filter((i) => i instanceof STWHero) as STWHero[];
   }
 
   /**
    * The profile's hero loadouts
    */
-  public get heroLoadouts() {
-    return (this.items.filter((i) => i instanceof STWHeroLoadout) as STWHeroLoadout[])
-      .sort((a, b) => a.loadoutIndex - b.loadoutIndex);
+  public get heroLoadouts(): STWHeroLoadout[] {
+    return (
+      this.items.filter((i) => i instanceof STWHeroLoadout) as STWHeroLoadout[]
+    ).sort((a, b) => a.loadoutIndex - b.loadoutIndex);
   }
 
   /**
    * The profile's schematics
    */
-  public get schematics() {
-    return this.items.filter((i) => i instanceof STWSchematic) as STWSchematic[];
+  public get schematics(): STWSchematic[] {
+    return this.items.filter(
+      (i) => i instanceof STWSchematic,
+    ) as STWSchematic[];
   }
 
   /**
    * The profile's weapon schematics
    */
-  public get weaponSchematics() {
-    return this.items.filter((i) => i instanceof STWWeaponSchematic) as STWWeaponSchematic[];
+  public get weaponSchematics(): STWWeaponSchematic[] {
+    return this.items.filter(
+      (i) => i instanceof STWWeaponSchematic,
+    ) as STWWeaponSchematic[];
   }
 
   /**
    * The profile's trap schematics
    */
-  public get trapSchematics() {
-    return this.items.filter((i) => i instanceof STWTrapSchematic) as STWTrapSchematic[];
+  public get trapSchematics(): STWTrapSchematic[] {
+    return this.items.filter(
+      (i) => i instanceof STWTrapSchematic,
+    ) as STWTrapSchematic[];
   }
 
   /**
    * The profile's team perks
    */
-  public get teamPerks() {
+  public get teamPerks(): STWTeamPerk[] {
     return this.items.filter((i) => i instanceof STWTeamPerk) as STWTeamPerk[];
   }
 
@@ -236,7 +298,9 @@ class STWProfile extends User {
    * The profile's power level
    */
   public get powerLevel(): number {
-    const totalFORTStats = Object.values(this.FORTStats).reduce((prev, cur) => prev + cur);
+    const totalFORTStats = Object.values(this.FORTStats).reduce(
+      (prev, cur) => prev + cur,
+    );
 
     return PowerLevelCurves.homebaseRating.eval(totalFORTStats * 4);
   }
@@ -245,7 +309,9 @@ class STWProfile extends User {
    * The profile's ventures power level
    */
   public get venturesPowerLevel(): number {
-    const totalFORTStats = Object.values(this.venturesFORTStats).reduce((prev, cur) => prev + cur);
+    const totalFORTStats = Object.values(this.venturesFORTStats).reduce(
+      (prev, cur) => prev + cur,
+    );
 
     return PowerLevelCurves.homebaseRating.eval(totalFORTStats * 4);
   }
@@ -253,7 +319,7 @@ class STWProfile extends User {
   /**
    * The profile's FORT stats
    */
-  public get FORTStats() {
+  public get FORTStats(): STWFORTStats {
     const FORTStats: STWFORTStats = {
       fortitude: 0,
       offense: 0,
@@ -273,7 +339,7 @@ class STWProfile extends User {
   /**
    * The profile's survivor squads' FORT stats
    */
-  public get survivorFORTStats() {
+  public get survivorFORTStats(): STWFORTStats {
     const survivorFORTStats: STWFORTStats = {
       fortitude: 0,
       offense: 0,
@@ -281,25 +347,31 @@ class STWProfile extends User {
       tech: 0,
     };
 
-    for (const survivorSquad of Object.values(this.survivorSquads) as STWSurvivor[][]) {
+    for (
+      const survivorSquad of Object.values(
+        this.survivorSquads,
+      ) as STWSurvivor[][]
+    ) {
       const leadSurvivor = survivorSquad.find((s) => s.squad!.slotIdx === 0);
 
       for (const survivor of survivorSquad) {
         let totalBonus = survivor.powerLevel;
         if (survivor.squad!.slotIdx === 0) totalBonus += survivor.leadBonus;
-        else if (leadSurvivor) totalBonus += survivor.calcSurvivorBonus(leadSurvivor);
+        else if (leadSurvivor) {
+          totalBonus += survivor.calcSurvivorBonus(leadSurvivor);
+        }
 
         switch (survivor.squad!.type) {
-          case 'medicine':
+          case "medicine":
             survivorFORTStats.fortitude += totalBonus;
             break;
-          case 'arms':
+          case "arms":
             survivorFORTStats.offense += totalBonus;
             break;
-          case 'synthesis':
+          case "synthesis":
             survivorFORTStats.tech += totalBonus;
             break;
-          case 'scavenging':
+          case "scavenging":
             survivorFORTStats.resistance += totalBonus;
             break;
         }
@@ -312,7 +384,7 @@ class STWProfile extends User {
   /**
    * The profile's research FORT stats
    */
-  public get researchFORTStats() {
+  public get researchFORTStats(): STWFORTStats {
     const survivorFORTStats: STWFORTStats = {
       fortitude: 0,
       offense: 0,
@@ -321,11 +393,19 @@ class STWProfile extends User {
     };
 
     for (const value of this.items) {
-      if (value.templateId.startsWith('Stat:') && !value.templateId.includes('phoenix')) {
-        if (value.templateId.includes('fortitude')) survivorFORTStats.fortitude += value.quantity;
-        else if (value.templateId.includes('resistance')) survivorFORTStats.resistance += value.quantity;
-        else if (value.templateId.includes('technology')) survivorFORTStats.tech += value.quantity;
-        else if (value.templateId.includes('offense')) survivorFORTStats.offense += value.quantity;
+      if (
+        value.templateId.startsWith("Stat:") &&
+        !value.templateId.includes("phoenix")
+      ) {
+        if (value.templateId.includes("fortitude")) {
+          survivorFORTStats.fortitude += value.quantity;
+        } else if (value.templateId.includes("resistance")) {
+          survivorFORTStats.resistance += value.quantity;
+        } else if (value.templateId.includes("technology")) {
+          survivorFORTStats.tech += value.quantity;
+        } else if (value.templateId.includes("offense")) {
+          survivorFORTStats.offense += value.quantity;
+        }
       }
     }
 
@@ -335,7 +415,7 @@ class STWProfile extends User {
   /**
    * The profile's ventures FORT stats
    */
-  public get venturesFORTStats() {
+  public get venturesFORTStats(): STWFORTStats {
     const venturesFORTStats: STWFORTStats = {
       fortitude: 0,
       offense: 0,
@@ -344,11 +424,19 @@ class STWProfile extends User {
     };
 
     for (const value of this.items) {
-      if (value.templateId.startsWith('Stat:') && value.templateId.includes('phoenix')) {
-        if (value.templateId.includes('fortitude')) venturesFORTStats.fortitude += value.quantity;
-        else if (value.templateId.includes('resistance')) venturesFORTStats.resistance += value.quantity;
-        else if (value.templateId.includes('technology')) venturesFORTStats.tech += value.quantity;
-        else if (value.templateId.includes('offense')) venturesFORTStats.offense += value.quantity;
+      if (
+        value.templateId.startsWith("Stat:") &&
+        value.templateId.includes("phoenix")
+      ) {
+        if (value.templateId.includes("fortitude")) {
+          venturesFORTStats.fortitude += value.quantity;
+        } else if (value.templateId.includes("resistance")) {
+          venturesFORTStats.resistance += value.quantity;
+        } else if (value.templateId.includes("technology")) {
+          venturesFORTStats.tech += value.quantity;
+        } else if (value.templateId.includes("offense")) {
+          venturesFORTStats.offense += value.quantity;
+        }
       }
     }
 
@@ -359,8 +447,8 @@ class STWProfile extends User {
    * Whether the profile is a founder
    * (Whether it can receive vbucks rewards)
    */
-  public get isFounder() {
-    return this.items.some((i) => i.templateId === 'Token:receivemtxcurrency');
+  public get isFounder(): boolean {
+    return this.items.some((i) => i.templateId === "Token:receivemtxcurrency");
   }
 }
 

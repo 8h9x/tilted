@@ -18,8 +18,9 @@ class EventTimeoutError extends Error {
    */
   constructor(event: string, timeout: number) {
     super();
-    this.name = 'EventTimeoutError';
-    this.message = `Timeout of ${timeout}ms exceeded while waiting for the event "${event}"`;
+    this.name = "EventTimeoutError";
+    this.message =
+      `Timeout of ${timeout}ms exceeded while waiting for the event "${event}"`;
 
     this.event = event;
     this.timeout = timeout;

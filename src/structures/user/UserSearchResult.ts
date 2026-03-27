@@ -1,6 +1,9 @@
-import User from './User';
-import type { UserSearchMatchType, UserSearchResultMatch } from '../../../resources/structs';
-import type Client from '../../Client';
+import User from "./User.ts";
+import type {
+  UserSearchMatchType,
+  UserSearchResultMatch,
+} from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a user search result entry

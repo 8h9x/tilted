@@ -1,10 +1,10 @@
-import STWSchematic from './STWSchematic';
-import type { STWSchematicTrapSubType } from '../../../resources/structs';
+import STWSchematic from "./STWSchematic.ts";
+import type { STWSchematicTrapSubType } from "../../resources/structs.ts";
 
 class STWTrapSchematic extends STWSchematic {
-  public type!: 'trap';
-  public subType!: STWSchematicTrapSubType;
-  public evoType!: never;
+  declare public type: "trap";
+  declare public subType: STWSchematicTrapSubType;
+  declare public evoType: never;
 }
 
 export default STWTrapSchematic;

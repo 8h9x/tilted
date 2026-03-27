@@ -1,15 +1,21 @@
-import STWItem from './STWItem';
+import STWItem from "./STWItem.ts";
 import {
-  parseSTWSurvivorTemplateId,
-  calcSTWSurvivorPowerLevel, calcSTWSurvivorLeadBonus,
   calcSTWSurvivorBonus,
-} from '../../util/Util';
-import type Client from '../../Client';
+  calcSTWSurvivorLeadBonus,
+  calcSTWSurvivorPowerLevel,
+  parseSTWSurvivorTemplateId,
+} from "../../util/Util.ts";
+import type Client from "../../Client.ts";
 import type {
-  STWSurvivorSquadData, STWSurvivorType, STWItemRarity,
-  STWSurvivorSquads, STWSurvivorSquadType, STWSurvivorGender, STWItemTier,
-} from '../../../resources/structs';
-import type { STWProfileSurvivorData } from '../../../resources/httpResponses';
+  STWItemRarity,
+  STWItemTier,
+  STWSurvivorGender,
+  STWSurvivorSquadData,
+  STWSurvivorSquads,
+  STWSurvivorSquadType,
+  STWSurvivorType,
+} from "../../resources/structs.ts";
+import type { STWProfileSurvivorData } from "../../resources/httpResponses.ts";
 
 /**
  * Represents a Save The World profile's survivor
@@ -116,22 +122,28 @@ class STWSurvivor extends STWItem {
 
     this.managerSynergy = data.attributes.managerSynergy;
 
-    this.gender = data.attributes.gender === '1' ? 'male' : 'female';
+    this.gender = data.attributes.gender === "1" ? "male" : "female";
     this.level = data.attributes.level;
 
-    this.squad = data.attributes.squad_id ? {
-      id: data.attributes.squad_id,
-      name: data.attributes.squad_id.split('_')[3] as keyof STWSurvivorSquads,
-      type: data.attributes.squad_id.split('_')[2] as STWSurvivorSquadType,
-      slotIdx: data.attributes.squad_slot_idx,
-    } : undefined;
+    this.squad = data.attributes.squad_id
+      ? {
+        id: data.attributes.squad_id,
+        name: data.attributes.squad_id.split(
+          "_",
+        )[3] as keyof STWSurvivorSquads,
+        type: data.attributes.squad_id.split("_")[2] as STWSurvivorSquadType,
+        slotIdx: data.attributes.squad_slot_idx,
+      }
+      : undefined;
 
     this.portrait = data.attributes.portrait;
     this.maxLevelBonus = data.attributes.max_level_bonus;
     this.personality = data.attributes.personality;
     this.xp = data.attributes.xp;
 
-    this.buildingSlotBuildingId = data.attributes.building_slot_used !== -1 ? data.attributes.slotted_building_id : undefined;
+    this.buildingSlotBuildingId = data.attributes.building_slot_used !== -1
+      ? data.attributes.slotted_building_id
+      : undefined;
 
     this.setBonus = data.attributes.set_bonus;
     this.isSeen = data.attributes.item_seen;
@@ -141,26 +153,35 @@ class STWSurvivor extends STWItem {
   /**
    * Whether the survivor is a leader
    */
-  public get isLeader() {
-    return this.type === 'manager';
+  public get isLeader(): boolean {
+    return this.type === "manager";
   }
 
   /**
    * The survivor's power level.
    * Depends on the tier, level, rarity value and whether the survivor is a leader
    */
-  public get powerLevel() {
-    return calcSTWSurvivorPowerLevel(this.rarity, this.isLeader, this.level, this.tier);
+  public get powerLevel(): number {
+    return calcSTWSurvivorPowerLevel(
+      this.rarity,
+      this.isLeader,
+      this.level,
+      this.tier,
+    );
   }
 
   /**
    * The survivor's lead bonus.
    * Will return 0 if the survivor is not a leader or not part of a squad
    */
-  public get leadBonus() {
+  public get leadBonus(): number {
     if (!this.managerSynergy || !this.squad) return 0;
 
-    return calcSTWSurvivorLeadBonus(this.managerSynergy, this.squad.name, this.powerLevel);
+    return calcSTWSurvivorLeadBonus(
+      this.managerSynergy,
+      this.squad.name,
+      this.powerLevel,
+    );
   }
 
   /**
@@ -168,11 +189,18 @@ class STWSurvivor extends STWItem {
    * Depends on the leader's rarity and personality.
    * Returns 0 if the survivor is a leader
    */
-  public calcSurvivorBonus(leader: STWSurvivor) {
+  public calcSurvivorBonus(leader: STWSurvivor): number {
     if (this.isLeader) return 0;
-    if (!leader.isLeader) throw new Error('The leader survivor must be a leader');
+    if (!leader.isLeader) {
+      throw new Error("The leader survivor must be a leader");
+    }
 
-    return calcSTWSurvivorBonus(leader.personality, leader.rarity, this.personality, this.powerLevel);
+    return calcSTWSurvivorBonus(
+      leader.personality,
+      leader.rarity,
+      this.personality,
+      this.powerLevel,
+    );
   }
 }
 

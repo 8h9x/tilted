@@ -12,7 +12,7 @@ class UserNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'UserNotFoundError';
+    this.name = "UserNotFoundError";
     this.message = `The user "${query}" does not exist`;
 
     this.query = query;

@@ -1,9 +1,19 @@
-import PartyPermissionError from '../../exceptions/PartyPermissionError';
-import PartyMemberMeta from './PartyMemberMeta';
-import User from '../user/User';
-import type Party from './Party';
-import type ClientParty from './ClientParty';
-import type { PartyMemberData, PartyMemberSchema, PartyMemberUpdateData } from '../../../resources/structs';
+import PartyPermissionError from "../../exceptions/PartyPermissionError.ts";
+import PartyMemberMeta from "./PartyMemberMeta.ts";
+import User from "../user/User.ts";
+import type Party from "./Party.ts";
+import type ClientParty from "./ClientParty.ts";
+import type {
+  BannerMeta,
+  BattlePassMeta,
+  CosmeticsVariantMeta,
+  MatchMeta,
+  PartyMemberData,
+  PartyMemberIsland,
+  PartyMemberSchema,
+  PartyMemberUpdateData,
+  Platform,
+} from "../../resources/structs.ts";
 
 /**
  * Represents a party member
@@ -61,119 +71,119 @@ class PartyMember extends User {
   /**
    * Whether this member is the leader of the party
    */
-  public get isLeader() {
-    return this.role === 'CAPTAIN';
+  public get isLeader(): boolean {
+    return this.role === "CAPTAIN";
   }
 
   /**
    * The member's currently equipped outfit CID
    */
-  public get outfit() {
+  public get outfit(): string | undefined {
     return this.meta.outfit;
   }
 
   /**
    * The member's currently equipped pickaxe ID
    */
-  public get pickaxe() {
+  public get pickaxe(): string | undefined {
     return this.meta.pickaxe;
   }
 
   /**
    * The member's current emote EID
    */
-  public get emote() {
+  public get emote(): string | undefined {
     return this.meta.emote;
   }
 
   /**
    * The member's currently equipped backpack BID
    */
-  public get backpack() {
+  public get backpack(): string | undefined {
     return this.meta.backpack;
   }
 
   /**
    * The member's currently equipped shoes
    */
-  public get shoes() {
+  public get shoes(): string | undefined {
     return this.meta.shoes;
   }
 
   /**
    * Whether the member is ready
    */
-  public get isReady() {
+  public get isReady(): boolean {
     return this.meta.isReady;
   }
 
   /**
    * Whether the member is sitting out
    */
-  public get isSittingOut() {
+  public get isSittingOut(): boolean {
     return this.meta.isSittingOut;
   }
 
   /**
    * The member's current input method
    */
-  public get inputMethod() {
+  public get inputMethod(): string | undefined {
     return this.meta.input;
   }
 
   /**
    * The member's cosmetic variants
    */
-  public get variants() {
+  public get variants(): CosmeticsVariantMeta {
     return this.meta.variants;
   }
 
   /**
    * The member's custom data store
    */
-  public get customDataStore() {
+  public get customDataStore(): string[] {
     return this.meta.customDataStore;
   }
 
   /**
    * The member's banner info
    */
-  public get banner() {
+  public get banner(): BannerMeta | undefined {
     return this.meta.banner;
   }
 
   /**
    * The member's battlepass info
    */
-  public get battlepass() {
+  public get battlepass(): BattlePassMeta | undefined {
     return this.meta.battlepass;
   }
 
   /**
    * The member's platform
    */
-  public get platform() {
+  public get platform(): Platform | undefined {
     return this.meta.platform;
   }
 
   /**
    * The member's match info
    */
-  public get matchInfo() {
+  public get matchInfo(): MatchMeta {
     return this.meta.match;
   }
 
   /**
    * The member's current playlist
    */
-  public get playlist() {
+  public get playlist(): PartyMemberIsland {
     return this.meta.island;
   }
 
   /**
    * Whether a marker has been set
    */
-  public get isMarkerSet() {
+  public get isMarkerSet(): boolean {
     return this.meta.isMarkerSet;
   }
 
@@ -181,7 +191,7 @@ class PartyMember extends User {
    * The member's marker location [x, y] tuple.
    * [0, 0] if there is no marker set
    */
-  public get markerLocation() {
+  public get markerLocation(): [number, number] {
     return this.meta.markerLocation;
   }
 
@@ -189,9 +199,11 @@ class PartyMember extends User {
    * Kicks this member from the client's party.
    * @throws {PartyPermissionError} The client is not a member or not the leader of the party
    */
-  public async kick() {
+  public kick(): Promise<any> {
     // This is a very hacky solution, but it's required since we cannot import ClientParty (circular dependencies)
-    if (typeof (this.party as any).kick !== 'function') throw new PartyPermissionError();
+    if (typeof (this.party as any).kick !== "function") {
+      throw new PartyPermissionError();
+    }
     return (this.party as any).kick(this.id);
   }
 
@@ -199,9 +211,11 @@ class PartyMember extends User {
    * Promotes this member
    * @throws {PartyPermissionError} The client is not a member or not the leader of the party
    */
-  public async promote() {
+  public promote(): Promise<any> {
     // This is a very hacky solution, but it's required since we cannot import ClientParty (circular dependencies)
-    if (typeof (this.party as any).promote !== 'function') throw new PartyPermissionError();
+    if (typeof (this.party as any).promote !== "function") {
+      throw new PartyPermissionError();
+    }
     return (this.party as any).promote(this.id);
   }
 
@@ -211,18 +225,22 @@ class PartyMember extends User {
    * @throws {PartyPermissionError} The client is not the leader of the party
    * @throws {EpicgamesAPIError}
    */
-  public async hide(hide = true) {
+  public hide(hide = true): Promise<any> {
     // This is a very hacky solution, but it's required since we cannot import ClientParty (circular dependencies)
-    if (typeof (this.party as any).hideMember !== 'function') throw new PartyPermissionError();
+    if (typeof (this.party as any).hideMember !== "function") {
+      throw new PartyPermissionError();
+    }
     return (this.party as any).hideMember(this.id, hide);
   }
 
   /**
    * Bans this member from the client's party.
    */
-  public async chatBan() {
+  public chatBan(): Promise<any> {
     // This is a very hacky solution, but it's required since we cannot import ClientParty (circular dependencies)
-    if (typeof (this.party as any).chatBan !== 'function') throw new PartyPermissionError();
+    if (typeof (this.party as any).chatBan !== "function") {
+      throw new PartyPermissionError();
+    }
     return (this.party as any).chatBan(this.id);
   }
 
@@ -232,7 +250,13 @@ class PartyMember extends User {
    */
   public updateData(data: PartyMemberUpdateData) {
     if (data.revision > this.revision) this.revision = data.revision;
-    if (data.account_dn !== this.displayName) this.update({ id: this.id, displayName: data.account_dn, externalAuths: this.externalAuths });
+    if (data.account_dn !== this.displayName) {
+      this.update({
+        id: this.id,
+        displayName: data.account_dn,
+        externalAuths: this.externalAuths,
+      });
+    }
 
     this.meta.update(data.member_state_updated, true);
     this.meta.remove(data.member_state_removed as (keyof PartyMemberSchema)[]);
@@ -241,7 +265,7 @@ class PartyMember extends User {
   /**
    * Converts this party member into an object
    */
-  public toObject(): PartyMemberData {
+  public override toObject(): PartyMemberData {
     return {
       id: this.id,
       account_id: this.id,

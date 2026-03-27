@@ -1,6 +1,6 @@
-import Base from '../Base';
-import type User from './user/User';
-import type Client from '../Client';
+import Base from "../Base.ts";
+import type User from "./user/User.ts";
+import type Client from "../Client.ts";
 
 /**
  * Represents a user's global profile.

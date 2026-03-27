@@ -1,13 +1,19 @@
-import { calcSTWNonSurvivorPowerLevel, parseSTWSchematicTemplateId } from '../../util/Util';
-import STWItem from './STWItem';
-import type { STWProfileSchematicData } from '../../../resources/httpResponses';
+import {
+  calcSTWNonSurvivorPowerLevel,
+  parseSTWSchematicTemplateId,
+} from "../../util/Util.ts";
+import STWItem from "./STWItem.ts";
+import type { STWProfileSchematicData } from "../../resources/httpResponses.ts";
 import type {
-  STWItemRarity, STWItemTier,
+  STWItemRarity,
+  STWItemTier,
   STWSchematicEvoType,
-  STWSchematicMeleeSubType, STWSchematicRangedSubType, STWSchematicTrapSubType,
+  STWSchematicMeleeSubType,
+  STWSchematicRangedSubType,
+  STWSchematicTrapSubType,
   STWSchematicType,
-} from '../../../resources/structs';
-import type Client from '../../Client';
+} from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a Save The World profile's schematic
@@ -21,7 +27,10 @@ class STWSchematic extends STWItem {
   /**
    * The schematic's subtype (specific type of ranged/melee weapon or trap)
    */
-  public subType?: STWSchematicRangedSubType | STWSchematicMeleeSubType | STWSchematicTrapSubType;
+  public subType?:
+    | STWSchematicRangedSubType
+    | STWSchematicMeleeSubType
+    | STWSchematicTrapSubType;
 
   /**
    * The schematic's name
@@ -111,8 +120,10 @@ class STWSchematic extends STWItem {
    * The schematic's power level.
    * Depends on the tier, level, and rarity value
    */
-  public get powerLevel() {
-    if (!this.rarity || !this.tier) { return 1; }
+  public get powerLevel(): number {
+    if (!this.rarity || !this.tier) {
+      return 1;
+    }
     return calcSTWNonSurvivorPowerLevel(this.rarity, this.level, this.tier);
   }
 }

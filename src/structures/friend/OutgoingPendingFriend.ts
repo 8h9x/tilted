@@ -1,6 +1,6 @@
-import BasePendingFriend from './BasePendingFriend';
-import type { PendingFriendData } from '../../../resources/structs';
-import type Client from '../../Client';
+import BasePendingFriend from "./BasePendingFriend.ts";
+import type { PendingFriendData } from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents an outgoing pending friendship request
@@ -9,7 +9,7 @@ class OutgoingPendingFriend extends BasePendingFriend {
   constructor(client: Client, data: PendingFriendData) {
     super(client, data);
 
-    this.direction = 'OUTGOING';
+    this.direction = "OUTGOING";
   }
 
   /**
@@ -18,7 +18,7 @@ class OutgoingPendingFriend extends BasePendingFriend {
    * @throws {FriendNotFoundError} The user is not friends with the client
    * @throws {EpicgamesAPIError}
    */
-  public async abort() {
+  public abort(): Promise<void> {
     return this.client.friend.remove(this.id);
   }
 }

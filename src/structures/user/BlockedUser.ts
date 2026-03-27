@@ -1,4 +1,4 @@
-import User from './User';
+import User from "./User.ts";
 
 /**
  * Represents a blocked user
@@ -9,7 +9,7 @@ class BlockedUser extends User {
    * @throws {UserNotFoundError} The user wasn't found
    * @throws {EpicgamesAPIError}
    */
-  public async unblock() {
+  public async unblock(): Promise<void> {
     return this.client.user.unblock(this.id);
   }
 }

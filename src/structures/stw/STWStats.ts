@@ -1,12 +1,19 @@
-import Base from '../../Base';
-import type Client from '../../Client';
-import type { STWProfileStatsData } from '../../../resources/httpResponses';
+import Base from "../../Base.ts";
+import type Client from "../../Client.ts";
+import type { STWProfileStatsData } from "../../resources/httpResponses.ts";
 import type {
-  STWStatsNodeCostsData, STWStatsBRLoadoutData, STWStatsSTWLoadoutData,
-  STWStatsMissionAlertRedemptionData, STWStatsQuestData, STWStatsGameplayStatData,
-  STWStatsClientSettingsData, STWStatsResearchLevelsData, STWStatsDailyRewardsData,
-  STWStatsEventCurrencyData, STWStatsXPData,
-} from '../../../resources/structs';
+  STWStatsBRLoadoutData,
+  STWStatsClientSettingsData,
+  STWStatsDailyRewardsData,
+  STWStatsEventCurrencyData,
+  STWStatsGameplayStatData,
+  STWStatsMissionAlertRedemptionData,
+  STWStatsNodeCostsData,
+  STWStatsQuestData,
+  STWStatsResearchLevelsData,
+  STWStatsSTWLoadoutData,
+  STWStatsXPData,
+} from "../../resources/structs.ts";
 
 /**
  * Represents a Save The World profile's stats
@@ -138,42 +145,52 @@ class STWStats extends Base {
       useRandomLoadout: data.use_random_loadout,
     };
 
-    this.missionAlertRedemptionRecord = data.mission_alert_redemption_record.claimData?.map((d) => ({
-      missionAlertId: d.missionAlertId,
-      redemptionDateUtc: new Date(d.redemptionDateUtc),
-      evictClaimDataAfterUtc: new Date(d.evictClaimDataAfterUtc),
-    }));
+    this.missionAlertRedemptionRecord = data.mission_alert_redemption_record
+      .claimData?.map((d) => ({
+        missionAlertId: d.missionAlertId,
+        redemptionDateUtc: new Date(d.redemptionDateUtc),
+        evictClaimDataAfterUtc: new Date(d.evictClaimDataAfterUtc),
+      }));
 
     this.rewardsClaimedPostMaxLevel = data.rewards_claimed_post_max_level || 0;
-    this.collectionBookMaxXPLevel = data.collection_book?.maxBookXpLevelAchieved;
+    this.collectionBookMaxXPLevel = data.collection_book
+      ?.maxBookXpLevelAchieved;
     this.mfaRewardClaimed = data.mfa_reward_claimed;
 
-    this.quests = data.quest_manager?.questPoolStats ? {
-      dailyLoginInterval: new Date(data.quest_manager.dailyLoginInterval!),
-      dailyQuestRerolls: data.quest_manager.dailyQuestRerolls!,
-      poolStats: {
-        stats: data.quest_manager.questPoolStats.poolStats.map((d) => ({
-          poolName: d.poolName,
-          nextRefresh: new Date(d.nextRefresh),
-          rerollsRemaining: d.rerollsRemaining,
-          questHistory: d.questHistory,
-        })),
-        dailyLoginInterval: new Date(data.quest_manager.questPoolStats.dailyLoginInterval!),
-        lockouts: data.quest_manager.questPoolStats.poolLockouts?.poolLockouts || [],
-      },
-    } : undefined;
+    this.quests = data.quest_manager?.questPoolStats
+      ? {
+        dailyLoginInterval: new Date(data.quest_manager.dailyLoginInterval!),
+        dailyQuestRerolls: data.quest_manager.dailyQuestRerolls!,
+        poolStats: {
+          stats: data.quest_manager.questPoolStats.poolStats.map((d) => ({
+            poolName: d.poolName,
+            nextRefresh: new Date(d.nextRefresh),
+            rerollsRemaining: d.rerollsRemaining,
+            questHistory: d.questHistory,
+          })),
+          dailyLoginInterval: new Date(
+            data.quest_manager.questPoolStats.dailyLoginInterval!,
+          ),
+          lockouts:
+            data.quest_manager.questPoolStats.poolLockouts?.poolLockouts ||
+            [],
+        },
+      }
+      : undefined;
 
     this.legacyResearchPointsSpent = data.legacy_research_points_spent;
     this.gameplayStats = data.gameplay_stats;
     this.unslotMtxSpend = data.unslot_mtx_spend;
     this.clientSettings = data.client_settings;
 
-    this.researchLevels = typeof data.research_levels?.fortitude === 'number' ? {
-      fortitude: data.research_levels.fortitude!,
-      resistance: data.research_levels.resistance!,
-      technology: data.research_levels.technology!,
-      offense: data.research_levels.offense!,
-    } : undefined;
+    this.researchLevels = typeof data.research_levels?.fortitude === "number"
+      ? {
+        fortitude: data.research_levels.fortitude!,
+        resistance: data.research_levels.resistance!,
+        technology: data.research_levels.technology!,
+        offense: data.research_levels.offense!,
+      }
+      : undefined;
 
     this.level = data.level || 0;
     this.latentXpMarker = data.latent_xp_marker;
@@ -187,12 +204,14 @@ class STWStats extends Base {
       lost: data.xp_lost,
     };
 
-    this.dailyRewards = data.daily_rewards?.lastClaimDate ? {
-      nextDefaultReward: data.daily_rewards.nextDefaultReward!,
-      totalDaysLoggedIn: data.daily_rewards.totalDaysLoggedIn!,
-      lastClaimDate: new Date(data.daily_rewards.lastClaimDate),
-      additionalSchedules: data.daily_rewards.additionalSchedules!,
-    } : undefined;
+    this.dailyRewards = data.daily_rewards?.lastClaimDate
+      ? {
+        nextDefaultReward: data.daily_rewards.nextDefaultReward!,
+        totalDaysLoggedIn: data.daily_rewards.totalDaysLoggedIn!,
+        lastClaimDate: new Date(data.daily_rewards.lastClaimDate),
+        additionalSchedules: data.daily_rewards.additionalSchedules!,
+      }
+      : undefined;
 
     this.packsGranted = data.packs_granted;
   }
@@ -200,7 +219,7 @@ class STWStats extends Base {
   /**
    * The profile's actual account level (ignoring the max level cap of 310)
    */
-  get actualLevel() {
+  get actualLevel(): number {
     return this.level + this.rewardsClaimedPostMaxLevel;
   }
 }

@@ -12,7 +12,7 @@ class CreatorCodeNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'CreatorCodeNotFoundError';
+    this.name = "CreatorCodeNotFoundError";
     this.message = `The Support-A-Creator code "${query}" does not exist`;
 
     this.query = query;

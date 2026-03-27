@@ -19,14 +19,14 @@ class AsyncLock {
   /**
    * Whether this lock is active
    */
-  public get isLocked() {
+  public get isLocked(): boolean {
     return !!this.lockPromise;
   }
 
   /**
    * Returns a promise that will resolve once the lock is released
    */
-  public wait() {
+  public wait(): Promise<void> {
     return this.lockPromise?.promise || Promise.resolve();
   }
 

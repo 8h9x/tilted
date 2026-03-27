@@ -1,8 +1,8 @@
-import BaseMessage from '../BaseMessage';
-import type { PartyMessageData } from '../../../resources/structs';
-import type Client from '../../Client';
-import type ClientParty from './ClientParty';
-import type PartyMember from './PartyMember';
+import BaseMessage from "../BaseMessage.ts";
+import type { PartyMessageData } from "../../resources/structs.ts";
+import type Client from "../../Client.ts";
+import type ClientParty from "./ClientParty.ts";
+import type PartyMember from "./PartyMember.ts";
 
 /**
  * Represents a party chat message
@@ -11,7 +11,7 @@ class PartyMessage extends BaseMessage {
   /**
    * The message's author
    */
-  public author!: PartyMember;
+  declare public author: PartyMember;
 
   /**
    * The message's party
@@ -33,8 +33,8 @@ class PartyMessage extends BaseMessage {
    * @param content The message that will be sent
    * @throws {SendMessageError} The message failed to send
    */
-  public reply(content: string) {
-    return this.party.chat.send(content);
+  public reply(content: string): void {
+    // return this.party.chat.send(content);
   }
 }
 

@@ -1,6 +1,6 @@
-import Base from '../../Base';
-import Image from '../Image';
-import type Client from '../../Client';
+import Base from "../../Base.ts";
+import Image from "../Image.ts";
+import type Client from "../../Client.ts";
 
 /**
  * Represents a fortnite save the world news message

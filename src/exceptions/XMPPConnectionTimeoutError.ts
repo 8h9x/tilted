@@ -12,8 +12,9 @@ class XMPPConnectionTimeoutError extends Error {
    */
   constructor(timeoutMs: number) {
     super();
-    this.name = 'XMPPConnectionTimeoutError';
-    this.message = `The XMPP connection timeout of ${timeoutMs}ms has been exceeded`;
+    this.name = "XMPPConnectionTimeoutError";
+    this.message =
+      `The XMPP connection timeout of ${timeoutMs}ms has been exceeded`;
 
     this.timeoutMs = timeoutMs;
   }

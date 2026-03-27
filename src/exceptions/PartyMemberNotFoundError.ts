@@ -12,7 +12,7 @@ class PartyMemberNotFoundError extends Error {
    */
   constructor(query: string) {
     super();
-    this.name = 'PartyMemberNotFoundError';
+    this.name = "PartyMemberNotFoundError";
     this.message = `The party member "${query}" does not exist`;
 
     this.query = query;

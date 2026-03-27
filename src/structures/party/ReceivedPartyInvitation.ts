@@ -1,16 +1,16 @@
-import Endpoints from '../../../resources/Endpoints';
-import PartyInvitationExpiredError from '../../exceptions/PartyInvitationExpiredError';
-import BasePartyInvitation from './BasePartyInvitation';
-import { AuthSessionStoreKey } from '../../../resources/enums';
-import type ClientUser from '../user/ClientUser';
-import type Friend from '../friend/Friend';
+import Endpoints from "../../resources/Endpoints.ts";
+import PartyInvitationExpiredError from "../../exceptions/PartyInvitationExpiredError.ts";
+import BasePartyInvitation from "./BasePartyInvitation.ts";
+import { AuthSessionStoreKey } from "../../resources/enums.ts";
+import type ClientUser from "../user/ClientUser.ts";
+import type Friend from "../friend/Friend.ts";
 
 /**
  * Represents a recieved party invitation
  */
 class ReceivedPartyInvitation extends BasePartyInvitation {
-  public sender!: Friend;
-  public receiver!: ClientUser;
+  declare public sender: Friend;
+  declare public receiver: ClientUser;
 
   /**
    * Accepts this invitation
@@ -18,15 +18,22 @@ class ReceivedPartyInvitation extends BasePartyInvitation {
    * @throws {EpicgamesAPIError}
    */
   public async accept() {
-    if (this.isExpired || this.isHandled) throw new PartyInvitationExpiredError();
+    if (this.isExpired || this.isHandled) {
+      throw new PartyInvitationExpiredError();
+    }
 
     await this.party.join();
     this.isHandled = true;
 
-    await this.client.http.epicgamesRequest({
-      method: 'DELETE',
-      url: `${Endpoints.BR_PARTY}/user/${this.client.user.self!.id}/pings/${this.sender.id}`,
-    }, AuthSessionStoreKey.Fortnite);
+    await this.client.http.epicgamesRequest(
+      {
+        method: "DELETE",
+        url: `${Endpoints.BR_PARTY}/user/${
+          this.client.user.self!.id
+        }/pings/${this.sender.id}`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
   }
 
   /**
@@ -34,12 +41,19 @@ class ReceivedPartyInvitation extends BasePartyInvitation {
    * @throws {PartyInvitationExpiredError} The invitation already got accepted or declined
    */
   public async decline() {
-    if (this.isExpired || this.isHandled) throw new PartyInvitationExpiredError();
+    if (this.isExpired || this.isHandled) {
+      throw new PartyInvitationExpiredError();
+    }
 
-    await this.client.http.epicgamesRequest({
-      method: 'DELETE',
-      url: `${Endpoints.BR_PARTY}/user/${this.client.user.self!.id}/pings/${this.sender.id}`,
-    }, AuthSessionStoreKey.Fortnite);
+    await this.client.http.epicgamesRequest(
+      {
+        method: "DELETE",
+        url: `${Endpoints.BR_PARTY}/user/${
+          this.client.user.self!.id
+        }/pings/${this.sender.id}`,
+      },
+      AuthSessionStoreKey.Fortnite,
+    );
 
     this.isHandled = true;
   }

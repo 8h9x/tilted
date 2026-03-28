@@ -1,8 +1,3 @@
-interface LockPromise {
-  promise: Promise<void>;
-  resolve: () => void;
-}
-
 /**
  * Represents an asynchronous task lock used for pending token refreshing or party changes
  * @private
@@ -11,43 +6,46 @@ class AsyncLock {
   /**
    * The lock promise
    */
-  private lockPromise?: LockPromise;
-  constructor() {
-    this.lockPromise = undefined;
-  }
+  private release?: () => void;
 
   /**
    * Whether this lock is active
    */
   public get isLocked(): boolean {
-    return !!this.lockPromise;
+    return !!this.release;
   }
 
   /**
    * Returns a promise that will resolve once the lock is released
    */
   public wait(): Promise<void> {
-    return this.lockPromise?.promise || Promise.resolve();
+    if (!this.release) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      const original = this.release!;
+      this.release = () => {
+        original();
+        resolve();
+      };
+    });
   }
 
   /**
    * Activates this lock
    */
   public lock() {
-    let resolve: any;
-    const promise = new Promise<void>((res) => {
-      resolve = res;
+    let release!: () => void;
+    new Promise<void>((res) => {
+      release = res;
     });
-
-    this.lockPromise = { promise, resolve: resolve as () => void };
+    this.release = release;
   }
 
   /**
    * Deactivates this lock
    */
   public unlock() {
-    this.lockPromise?.resolve();
-    this.lockPromise = undefined;
+    this.release?.();
+    this.release = undefined;
   }
 }
 

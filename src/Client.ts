@@ -294,7 +294,11 @@ class Client extends EventTarget {
     options?: EventListenerOptions | boolean,
   ): void;
   // @ts-ignore
-  override removeEventListener(type: any, callback: any, options?: any): void {
+  override removeEventListener(
+    type: any,
+    callback: any,
+    options?: any,
+  ): void {
     super.removeEventListener(type, callback, options);
     const count = (this.listenerCounts.get(type) || 0) - 1;
     if (count <= 0) this.listenerCounts.delete(type);
@@ -335,7 +339,10 @@ class Client extends EventTarget {
     }
 
     if (!this.config.disablePartyService) {
-      await this.initParty(this.config.createParty, this.config.forceNewParty);
+      await this.initParty(
+        this.config.createParty,
+        this.config.forceNewParty,
+      );
     }
     if (this.xmpp.isConnected) this.setStatus();
 
@@ -359,13 +366,15 @@ class Client extends EventTarget {
   /**
    * Restarts the client
    */
-  public async restart(): Promise<void> {
+  public async restart(useInitialAuth: boolean = false): Promise<void> {
     const refreshToken = this.auth.sessions.get(
       AuthSessionStoreKey.Fortnite,
     )?.refreshToken;
     await this.logout();
 
-    this.config.auth.refreshToken = refreshToken;
+    if (!useInitialAuth) {
+      this.config.auth.refreshToken = refreshToken;
+    }
     await this.login();
     this.config.auth.refreshToken = undefined;
   }
@@ -553,7 +562,8 @@ class Client extends EventTarget {
     for (const friend of this.friend.list.values()) {
       if (
         typeof friend.presence?.receivedAt !== "undefined" &&
-        Date.now() - friend.presence.receivedAt.getTime() > maxLifetime * 1000
+        Date.now() - friend.presence.receivedAt.getTime() >
+          maxLifetime * 1000
       ) {
         delete friend.presence;
         presences += 1;
@@ -668,9 +678,11 @@ class Client extends EventTarget {
     delay: number,
     ...args: any
   ): ReturnType<typeof setInterval> {
-    const interval = setInterval(fn, delay, ...args) as unknown as ReturnType<
-      typeof setInterval
-    >;
+    const interval = setInterval(
+      fn,
+      delay,
+      ...args,
+    ) as unknown as ReturnType<typeof setInterval>;
     this.intervals.add(interval);
     return interval;
   }
@@ -700,7 +712,9 @@ class Client extends EventTarget {
   ): void {
     switch (type) {
       case "regular":
-        if (typeof this.config.debug === "function") this.config.debug(message);
+        if (typeof this.config.debug === "function") {
+          this.config.debug(message);
+        }
         break;
       case "http":
         if (typeof this.config.httpDebug === "function") {
@@ -778,7 +792,8 @@ class Client extends EventTarget {
     const rawStatus = {
       Status: status ||
         this.config.defaultStatus ||
-        (this.party && `Lobby - ${this.party.size} / ${this.party.maxSize}`) ||
+        (this.party &&
+          `Lobby - ${this.party.size} / ${this.party.maxSize}`) ||
         "Playing Battle Royale",
       bIsPlaying: false,
       bIsJoinable: this.party &&
@@ -1050,12 +1065,16 @@ class Client extends EventTarget {
       );
     } catch (e) {
       if (e instanceof EpicgamesAPIError) {
-        if (e.code === "errors.com.epicgames.social.party.party_not_found") {
+        if (
+          e.code ===
+            "errors.com.epicgames.social.party.party_not_found"
+        ) {
           throw new PartyNotFoundError();
         }
 
         if (
-          e.code === "errors.com.epicgames.social.party.party_query_forbidden"
+          e.code ===
+            "errors.com.epicgames.social.party.party_query_forbidden"
         ) {
           throw new PartyPermissionError();
         }
@@ -1316,7 +1335,11 @@ class Client extends EventTarget {
       .flat(1)
       .map(
         (r) =>
-          new Stats(this, r, resolvedUsers.find((u) => u.id === r.accountId)!),
+          new Stats(
+            this,
+            r,
+            resolvedUsers.find((u) => u.id === r.accountId)!,
+          ),
       );
   }
 
@@ -1431,13 +1454,19 @@ class Client extends EventTarget {
   ): Promise<BRAccountLevelData[]> {
     const users = Array.isArray(user) ? user : [user];
 
-    const accountLevels = await this.getBRStats(users, undefined, undefined, [
-      `s${seasonNumber}_social_bp_level`,
-    ]);
+    const accountLevels = await this.getBRStats(
+      users,
+      undefined,
+      undefined,
+      [`s${seasonNumber}_social_bp_level`],
+    );
 
     return accountLevels.map((al) => ({
       user: al.user,
-      level: al.levelData[`s${seasonNumber}`] || { level: 0, progress: 0 },
+      level: al.levelData[`s${seasonNumber}`] || {
+        level: 0,
+        progress: 0,
+      },
     }));
   }
 

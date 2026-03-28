@@ -8,3 +8,6 @@ export const invalidTokenCodes = [
   "errors.com.epicgames.common.oauth.invalid_token",
   "errors.com.epicgames.common.authentication.token_verification_failed",
 ];
+
+export const invalidRefreshTokenCode =
+  "errors.com.epicgames.account.auth_token.invalid_refresh_token";

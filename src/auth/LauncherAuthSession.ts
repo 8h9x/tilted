@@ -3,6 +3,8 @@ import { AuthSessionType } from "../resources/enums.ts";
 import Endpoints from "../resources/Endpoints.ts";
 import type Client from "../Client.ts";
 import type { LauncherAuthData } from "../resources/structs.ts";
+import EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
+import { invalidRefreshTokenCode } from "../resources/constants.ts";
 
 class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
   public app: string;
@@ -129,7 +131,19 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
   public initRefreshTimeout() {
     clearTimeout(this.refreshTimeout);
     this.refreshTimeout = setTimeout(
-      () => this.refresh(),
+      async () => {
+        try {
+          await this.refresh();
+        } catch (err) {
+          if (
+            this.client.config.restartOnInvalidRefresh &&
+            err instanceof EpicgamesAPIError &&
+            err.code === invalidRefreshTokenCode
+          ) {
+            await this.client.restart(true);
+          }
+        }
+      },
       this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000,
     );
   }
@@ -161,7 +175,8 @@ class LauncherAuthSession extends AuthSession<AuthSessionType.Launcher> {
           displayName: session.displayName,
           expiresAt: session.refreshTokenExpiresAt.toISOString(),
           expiresIn: Math.round(
-            (session.refreshTokenExpiresAt.getTime() - Date.now()) / 1000,
+            (session.refreshTokenExpiresAt.getTime() - Date.now()) /
+              1000,
           ),
           token: session.refreshToken,
         },

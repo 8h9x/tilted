@@ -2,7 +2,10 @@ import HTTPError from "./HTTPError.ts";
 import type { RequestConfig } from "./types.ts";
 import Base from "../Base.ts";
 import AuthenticationMissingError from "../exceptions/AuthenticationMissingError.ts";
-import { invalidTokenCodes } from "../resources/constants.ts";
+import {
+  invalidRefreshTokenCode,
+  invalidTokenCodes,
+} from "../resources/constants.ts";
 import EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
 import type { AuthSessionStoreKey } from "../resources/enums.ts";
 import type Client from "../Client.ts";
@@ -95,11 +98,14 @@ class HTTP extends Base {
 
       if (
         response.status === 429 ||
-        (data as any)?.errorCode === "errors.com.epicgames.common.throttled"
+        (data as any)?.errorCode ===
+          "errors.com.epicgames.common.throttled"
       ) {
         const retryString = response.headers.get("retry-after") ||
           (data as any)?.messageVars?.[0] ||
-          (data as any)?.errorMessage?.match(/(?<=in )\d+(?= second)/)?.[0];
+          (data as any)?.errorMessage?.match(
+            /(?<=in )\d+(?= second)/,
+          )?.[0];
         const retryAfter = parseInt(retryString, 10);
         if (!Number.isNaN(retryAfter)) {
           await new Promise((res) => setTimeout(res, retryAfter * 1000 + 500));
@@ -171,13 +177,28 @@ class HTTP extends Base {
           data?.errorCode &&
           invalidTokenCodes.includes(data.errorCode)
         ) {
-          await this.client.auth.sessions.get(auth)!.refresh();
-
+          try {
+            await this.client.auth.sessions.get(auth)!.refresh();
+          } catch (refreshErr) {
+            if (
+              this.client.config.restartOnInvalidRefresh &&
+              refreshErr instanceof EpicgamesAPIError &&
+              refreshErr.code === invalidRefreshTokenCode
+            ) {
+              await this.client.restart(true);
+              return this.epicgamesRequest(config, auth); // retry with fresh session
+            }
+            throw refreshErr;
+          }
           return this.epicgamesRequest(config, auth);
         }
 
         if (typeof data?.errorCode === "string") {
-          throw new EpicgamesAPIError(data!, config, err.response.status);
+          throw new EpicgamesAPIError(
+            data!,
+            config,
+            err.response.status,
+          );
         }
       }
 

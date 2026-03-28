@@ -2,7 +2,10 @@ import AuthSession from "./AuthSession.ts";
 import { AuthSessionType } from "../resources/enums.ts";
 import Endpoints from "../resources/Endpoints.ts";
 import EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
-import { invalidTokenCodes } from "../resources/constants.ts";
+import {
+  invalidRefreshTokenCode,
+  invalidTokenCodes,
+} from "../resources/constants.ts";
 import type Client from "../Client.ts";
 import type { FortniteAuthData } from "../resources/structs.ts";
 
@@ -168,7 +171,19 @@ class FortniteAuthSession extends AuthSession<AuthSessionType.Fortnite> {
   public initRefreshTimeout() {
     clearTimeout(this.refreshTimeout);
     this.refreshTimeout = setTimeout(
-      () => this.refresh(),
+      async () => {
+        try {
+          await this.refresh();
+        } catch (err) {
+          if (
+            this.client.config.restartOnInvalidRefresh &&
+            err instanceof EpicgamesAPIError &&
+            err.code === invalidRefreshTokenCode
+          ) {
+            await this.client.restart(true);
+          }
+        }
+      },
       this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000,
     );
   }

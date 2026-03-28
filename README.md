@@ -24,22 +24,24 @@ npm install fnbr
 <h2>Usage example</h2>
 
 ```javascript
-const { Client } = require("fnbr");
+import { Client } from "@8h9x/tilted";
 
 const client = new Client();
 
-client.on("friend:message", (message) => {
-  console.log(`Message from ${message.author.displayName}: ${message.content}`);
+client.addEventListener("ready", () => {
+  console.log(`Logged in as ${client.user.self.displayName}`);
+});
+
+client.addEventListener("friend:message", ({ detail: { message } }) => {
+  console.log(
+    `Message from ${message.author.displayName}: ${message.content}`,
+  );
   if (message.content.toLowerCase().startsWith("ping")) {
     message.reply("Pong!");
   }
 });
 
-client.on("ready", () => {
-  console.log(`Logged in as ${client.user.self.displayName}`);
-});
-
-client.login();
+await client.login();
 ```
 
 <h2>Links</h2>

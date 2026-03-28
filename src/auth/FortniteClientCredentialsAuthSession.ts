@@ -3,6 +3,8 @@ import { AuthSessionType } from "../resources/enums.ts";
 import Endpoints from "../resources/Endpoints.ts";
 import type Client from "../Client.ts";
 import type { FortniteClientCredentialsAuthData } from "../resources/structs.ts";
+import EpicgamesAPIError from "../exceptions/EpicgamesAPIError.ts";
+import { invalidRefreshTokenCode } from "../resources/constants.ts";
 
 class FortniteClientCredentialsAuthSession
   extends AuthSession<AuthSessionType.FortniteClientCredentials> {
@@ -101,7 +103,19 @@ class FortniteClientCredentialsAuthSession
   public initRefreshTimeout() {
     clearTimeout(this.refreshTimeout);
     this.refreshTimeout = setTimeout(
-      () => this.refresh(),
+      async () => {
+        try {
+          await this.refresh();
+        } catch (err) {
+          if (
+            this.client.config.restartOnInvalidRefresh &&
+            err instanceof EpicgamesAPIError &&
+            err.code === invalidRefreshTokenCode
+          ) {
+            await this.client.restart(true);
+          }
+        }
+      },
       this.expiresAt.getTime() - Date.now() - 15 * 60 * 1000,
     );
   }
@@ -114,15 +128,17 @@ class FortniteClientCredentialsAuthSession
   ): Promise<FortniteClientCredentialsAuthSession> {
     const response = await client.http.epicgamesRequest<
       FortniteClientCredentialsAuthData
-    >({
-      method: "POST",
-      url: Endpoints.OAUTH_TOKEN_CREATE,
-      headers: {
-        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+    >(
+      {
+        method: "POST",
+        url: Endpoints.OAUTH_TOKEN_CREATE,
+        headers: {
+          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams(data).toString(),
       },
-      body: new URLSearchParams(data).toString(),
-    });
+    );
 
     const session = new FortniteClientCredentialsAuthSession(
       client,

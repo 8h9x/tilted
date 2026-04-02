@@ -17,22 +17,14 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * The currently equipped outfit CID
    */
   public get outfit(): string | undefined {
-    return (
-      (this.get("Default:AthenaCosmeticLoadout_j") as any)
-        ?.AthenaCosmeticLoadout?.characterPrimaryAssetId as string
-    )?.replace("AthenaCharacter:", "");
+    return (this.get("Default:MpLoadout1_j") as any)?.MpLoadout1?.s?.ac?.i;
   }
 
   /**
    * The currently equipped pickaxe ID
    */
   public get pickaxe(): string | undefined {
-    return (
-      (this.get("Default:AthenaCosmeticLoadout_j") as any)
-        ?.AthenaCosmeticLoadout?.pickaxeDef as string
-    )
-      ?.match(/(?<=\w*\.)\w*/)
-      ?.shift();
+    return (this.get("Default:MpLoadout1_j") as any)?.MpLoadout1?.s?.ap?.i;
   }
 
   /**
@@ -49,24 +41,15 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * The currently equipped backpack BID
    */
   public get backpack(): string | undefined {
-    return (
-      (this.get("Default:AthenaCosmeticLoadout_j") as any)
-        ?.AthenaCosmeticLoadout?.backpackDef as string
-    )
-      ?.match(/(?<=\w*\.)\w*/)
-      ?.shift();
+    return (this.get("Default:MpLoadout1_j") as any)?.MpLoadout1?.s?.ab?.i;
   }
 
   /**
    * The currently equipped shoes
    */
   public get shoes(): string | undefined {
-    return (
-      (this.get("Default:AthenaCosmeticLoadout_j") as any)
-        ?.AthenaCosmeticLoadout?.shoesDef as string
-    )
-      ?.match(/(?<=\w*\.)\w*/)
-      ?.shift();
+    // No equivalent slot exists in MpLoadout1_j yet
+    return undefined;
   }
 
   /**
@@ -74,8 +57,8 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    */
   public get isReady(): boolean {
     return (
-      (this.get("Default:LobbyState_j") as any)?.LobbyState?.gameReadiness ===
-        "Ready"
+      (this.get("Default:LobbyState_j") as any)?.LobbyState
+        ?.gameReadiness === "Ready"
     );
   }
 
@@ -84,8 +67,8 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    */
   public get isSittingOut(): boolean {
     return (
-      (this.get("Default:LobbyState_j") as any)?.LobbyState?.gameReadiness ===
-        "SittingOut"
+      (this.get("Default:LobbyState_j") as any)?.LobbyState
+        ?.gameReadiness === "SittingOut"
     );
   }
 
@@ -101,10 +84,9 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * The cosmetic variants
    */
   public get variants(): CosmeticsVariantMeta {
-    return (
-      (this.get("Default:AthenaCosmeticLoadoutVariants_j") as any)
-        ?.AthenaCosmeticLoadoutVariants?.vL || {}
-    );
+    // Variant data is now embedded in MpLoadout1_j.s slots (e.g. s.ac.v)
+    // and does not map to the old vL structure
+    return {};
   }
 
   /**
@@ -121,7 +103,12 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * The banner info
    */
   public get banner(): BannerMeta | undefined {
-    return (this.get("Default:AthenaBannerInfo_j") as any)?.AthenaBannerInfo;
+    const s = (this.get("Default:MpLoadout1_j") as any)?.MpLoadout1?.s;
+    if (!s?.li?.i || !s?.lc?.i) return undefined;
+    return {
+      bannerIconId: s.li.i,
+      bannerColorId: s.lc.i,
+    };
   }
 
   /**
@@ -135,8 +122,8 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * The platform
    */
   public get platform(): Platform | undefined {
-    return (this.get("Default:PlatformData_j") as any)?.PlatformData?.platform
-      ?.platformDescription?.name;
+    return (this.get("Default:PlatformData_j") as any)?.PlatformData
+      ?.platform?.platformDescription?.name;
   }
 
   /**
@@ -147,7 +134,9 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
       ?.location;
     const hasPreloadedAthena = (this.get("Default:LobbyState_j") as any)
       ?.LobbyState?.hasPreloadedAthena;
-    const playerCount = this.get("Default:NumAthenaPlayersLeft_U") as number;
+    const playerCount = this.get(
+      "Default:NumAthenaPlayersLeft_U",
+    ) as number;
     const matchStartedAt = this.get(
       "Default:UtcTimeStartedMatchAthena_s",
     ) as string;
@@ -174,8 +163,8 @@ class PartyMemberMeta extends Meta<PartyMemberSchema> {
    * Whether a marker has been set
    */
   public get isMarkerSet(): boolean {
-    return !!(this.get("Default:FrontEndMapMarker_j") as any)?.FrontEndMapMarker
-      ?.bIsSet;
+    return !!(this.get("Default:FrontEndMapMarker_j") as any)
+      ?.FrontEndMapMarker?.bIsSet;
   }
 
   /**

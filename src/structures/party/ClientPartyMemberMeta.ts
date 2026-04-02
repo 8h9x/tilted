@@ -28,12 +28,17 @@ class ClientPartyMemberMeta extends PartyMemberMeta {
 
     this.update(
       {
-        "Default:AthenaCosmeticLoadout_j": JSON.stringify({
-          AthenaCosmeticLoadout: {
+        "Default:MpLoadout1_j": JSON.stringify({
+          MpLoadout1: {
             ...JSON.parse(
-              defaultPartyMemberMeta["Default:AthenaCosmeticLoadout_j"],
-            ).AthenaCosmeticLoadout,
-            characterPrimaryAssetId: `AthenaCharacter:${defaultCharacter}`,
+              defaultPartyMemberMeta["Default:MpLoadout1_j"],
+            ).MpLoadout1,
+            s: {
+              ...JSON.parse(
+                defaultPartyMemberMeta["Default:MpLoadout1_j"],
+              ).MpLoadout1.s,
+              ac: { i: defaultCharacter, v: [] },
+            },
           },
         }),
         "Default:CampaignHero_j": JSON.stringify({

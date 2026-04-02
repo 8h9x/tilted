@@ -1207,7 +1207,7 @@ export interface Cosmetics {
   };
   backpack?: { id: string; variants?: CosmeticVariant[]; path?: string };
   pickaxe?: { id: string; variants?: CosmeticVariant[]; path?: string };
-  shoes?: { id: string; path?: string };
+  shoes?: { id: string; variants?: CosmeticVariant[]; path?: string };
 }
 
 export interface CosmeticVariant {

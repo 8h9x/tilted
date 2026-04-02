@@ -76,6 +76,29 @@ class Meta<T extends Schema> {
   }
 
   /**
+   * Merges partial updates into the inner object of a JSON meta key.
+   * Assumes the key follows the "Namespace:InnerKey_j" naming convention,
+   * e.g. "Default:LobbyState_j" has the inner key "LobbyState".
+   * @param key The JSON schema key (must end in "_j")
+   * @param updates Partial updates to merge into the inner object
+   * @returns The new serialized value
+   */
+  public mergeInner(
+    key: keyof T & string,
+    updates: Record<string, any>,
+  ): T[keyof T & string] {
+    const current = this.get(key) as Record<string, any>;
+    const innerKey = key.slice(key.indexOf(":") + 1, -2);
+    return this.set(key, {
+      ...current,
+      [innerKey]: {
+        ...(current[innerKey] as Record<string, any>),
+        ...updates,
+      },
+    });
+  }
+
+  /**
    * Updates the schema
    * @param schema The new schema
    * @param isRaw Whether the values are raw
